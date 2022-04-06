@@ -1,5 +1,7 @@
-#Activate conda environment role_spec
-#source ~/miniconda3/etc/profile.d/conda.sh
+#Activate conda environment xalign_role.
+#Following line is added to resolve the error 'Your shell has not been properly configured to use 'conda activate'. 
+#Pass the appropriate anaconda/miniconda path in the below line.
+source ~/miniconda3/etc/profile.d/conda.sh
 conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
