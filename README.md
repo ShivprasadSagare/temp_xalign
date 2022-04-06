@@ -36,7 +36,7 @@ cd ..
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
-  * Pass appropriate arguments for batch size, gpus, etc. in following scripts.
+  * Pass appropriate arguments for batch size, gpus, epochs, etc. in following scripts.
   * `conda activate xalign_role` from shell can throw error sometimes. Refer to initial few commented lines to reolve the issue instantly, if it occurs.
   
 ### Steps to run the pretraining experiment
