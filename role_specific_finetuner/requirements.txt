@@ -1,0 +1,11 @@
+tqdm
+numpy
+pytorch-lightning==1.6.0 
+sacrebleu
+unidecode
+networkx
+rouge-score
+GitPython
+indic-nlp-library
+wandb
+sentencepiece
