@@ -1,6 +1,8 @@
 ## temp_xalign
 temporary repo for sharing code with Manish Sir.
 
+> Tip: All the file paths below are w.r.t `role_specific_finetuner/`. Make sure you `cd` into it before running the scripts.
+
 ### Setting up environment and data
 1. Setup the conda environment
 ```
