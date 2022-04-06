@@ -7,6 +7,7 @@ temporary repo for sharing code with Manish Sir.
 1. Setup the conda environment
 ```
 conda create --name xalign_role python==3.7
+conda activate xalign_role
 pip install -r requirements.txt
 cd transformers
 pip install .
