@@ -16,6 +16,7 @@ cd ..
 
 2. Setup the data
 
+2.1 Multilingual training experiment
 wiki pretraining data: https://drive.google.com/file/d/1zvPuzPntsRtMisPfanAG_qH6oePKq_M0/view?usp=sharing <br>
 xalign finetuning data: https://drive.google.com/file/d/1xuS8zvq4k2F6Uxfx6XF6R3ueKNNFodjl/view?usp=sharing
 
@@ -32,6 +33,25 @@ unzip xalign_unified_script.zip
 
 cd ..
 ```
+
+2.2 Only english training experiment
+wiki pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing
+xalign finetuning data: https://drive.google.com/file/d/1vBM83iSmGZ7dIUBbkK3vshS51bnNr2lY/view?usp=sharing
+
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_only_english` and `./data/xalign_only_english`.
+```
+mkdir data
+cd data
+
+gdown 1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD
+unzip wiki_only_english.zip
+
+gdown 1vBM83iSmGZ7dIUBbkK3vshS51bnNr2lY
+unzip xalign_only_english.zip
+
+cd ..
+```
+
 
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
