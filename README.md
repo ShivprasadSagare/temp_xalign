@@ -17,6 +17,7 @@ cd ..
 2. Setup the data
 
 2.1 Multilingual training experiment
+
 wiki pretraining data: https://drive.google.com/file/d/1zvPuzPntsRtMisPfanAG_qH6oePKq_M0/view?usp=sharing <br>
 xalign finetuning data: https://drive.google.com/file/d/1xuS8zvq4k2F6Uxfx6XF6R3ueKNNFodjl/view?usp=sharing
 
@@ -35,6 +36,7 @@ cd ..
 ```
 
 2.2 Only english training experiment
+
 wiki pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing
 xalign finetuning data: https://drive.google.com/file/d/1vBM83iSmGZ7dIUBbkK3vshS51bnNr2lY/view?usp=sharing
 
