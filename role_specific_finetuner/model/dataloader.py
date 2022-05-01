@@ -60,7 +60,8 @@ class DS(Dataset):
         attention_mask.extend([1] * len(prefix_tokenized))
         role_ids.extend([0] * len(prefix_tokenized))
         try:
-            data = json.loads(input_text)
+            # data = json.loads(input_text)
+            data = eval(input_text)
         except json.decoder.JSONDecodeError:
             print(input_text)
             raise
