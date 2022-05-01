@@ -37,7 +37,7 @@ cd ..
 
 2.2 Only english training experiment
 
-wiki pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing
+wiki pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing <br>
 xalign finetuning data: https://drive.google.com/file/d/1vBM83iSmGZ7dIUBbkK3vshS51bnNr2lY/view?usp=sharing
 
 Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_only_english` and `./data/xalign_only_english`.
