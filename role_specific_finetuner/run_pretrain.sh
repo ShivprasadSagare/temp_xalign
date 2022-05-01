@@ -10,7 +10,7 @@ checkpoint_path=None
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/wiki/wiki_only_english.csv' \
+--train_path 'data/wiki_only_english/wiki_only_english.csv' \
 --val_path 'data/xalign_only_english/val.csv' \
 --test_path 'data/xalign_only_english/test.csv' \
 --tokenizer_name_or_path 't5-small' \
