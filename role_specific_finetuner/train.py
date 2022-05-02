@@ -77,7 +77,9 @@ def main():
         save_dir=args['log_dir'], 
         log_model=log_model
     )
-    checkpoint_callback = ModelCheckpoint(monitor='val_loss', mode='min')
+
+    every_n_epochs = args['max_epochs'] // 5
+    checkpoint_callback = ModelCheckpoint(every_n_epochs=every_n_epochs)
     trainer = pl.Trainer(
         gpus=args['gpus'], 
         max_epochs=args['max_epochs'], 
