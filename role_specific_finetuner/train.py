@@ -79,13 +79,14 @@ def main():
     )
 
     every_n_epochs = args['max_epochs'] // 5
-    checkpoint_callback = ModelCheckpoint(every_n_epochs=every_n_epochs)
+    checkpoint_callback_1 = ModelCheckpoint(every_n_epochs=every_n_epochs, save_top_k=-1)
+    checkpoint_callback_2 = ModelCheckpoint(monitor='val_loss', mode='min')
     trainer = pl.Trainer(
         gpus=args['gpus'], 
         max_epochs=args['max_epochs'], 
         strategy=args['strategy'], 
         logger=logger,
-        callbacks=[checkpoint_callback],
+        callbacks=[checkpoint_callback_1, checkpoint_callback_2],
         limit_train_batches=limit_train_batches,
         limit_val_batches=limit_val_batches,
         limit_test_batches=limit_test_batches
