@@ -40,7 +40,7 @@ cd ..
 wiki pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing <br>
 xalign finetuning data: https://drive.google.com/file/d/1iEaYO0dE7owvX3m5suHEPZVctDpD5RQq/view?usp=sharing
 
-Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_only_english` and `./data/xalign_only_english`.
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_unified_script` and `./data/xalign_unified_script`.
 ```
 mkdir data
 cd data
