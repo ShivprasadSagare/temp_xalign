@@ -138,21 +138,25 @@ class FineTuner(pl.LightningModule):
 
         overall_bleu = 0
         for key in self.languages_map:
-            self.languages_map[key]['bleu'] = self.cal_bleu.corpus_score(self.languages_map[key]['original_pred_text'], [self.languages_map[key]['original_ref_text']]).score
-            self.log(f"test_bleu_{key}", self.languages_map[key]['bleu'])
-            overall_bleu += self.languages_map[key]['bleu']
+        # for key in ['en']:
+            try:
+                self.languages_map[key]['bleu'] = self.cal_bleu.corpus_score(self.languages_map[key]['original_pred_text'], [self.languages_map[key]['original_ref_text']]).score
+                self.log(f"test_bleu_{key}", self.languages_map[key]['bleu'])
+                overall_bleu += self.languages_map[key]['bleu']
+            except:
+                pass
 
         self.log("test_bleu", overall_bleu/len(self.languages_map))
 
-        random_indices = set([len(self.languages_map['hi']['original_input_text'])//i for i in range(2, 7)])
-        epoch_list = [self.trainer.current_epoch for i in range(len(random_indices))]
+        # random_indices = set([len(self.languages_map['hi']['original_input_text'])//i for i in range(2, 7)])
+        # epoch_list = [self.trainer.current_epoch for i in range(len(random_indices))]
 
-        input_text = [self.languages_map['hi']['original_input_text'][i] for i in random_indices]
-        pred_text = [self.languages_map['hi']['original_pred_text'][i] for i in random_indices]
-        ref_text = [self.languages_map['hi']['original_ref_text'][i] for i in random_indices]
+        # input_text = [self.languages_map['hi']['original_input_text'][i] for i in random_indices]
+        # pred_text = [self.languages_map['hi']['original_pred_text'][i] for i in random_indices]
+        # ref_text = [self.languages_map['hi']['original_ref_text'][i] for i in random_indices]
 
-        data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
-        self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
+        # data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
+        # self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
 
         
 

@@ -38,6 +38,7 @@ class DS(Dataset):
         lang = self.languages_map[lang_code]['label']
         lang_id = self.languages_map[lang_code]['id']
         prefix = f'rdf to {lang} text: '
+        # prefix = f'rdf to en text: '
 
         input_encoding = self.role_specific_encoding(prefix, input_text)
         # input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
@@ -122,13 +123,13 @@ class DataModule(pl.LightningDataModule):
             self.test = DS(self.hparams.test_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.hparams.train_batch_size, num_workers=8,shuffle=True)
+        return DataLoader(self.train, batch_size=self.hparams.train_batch_size, num_workers=0,shuffle=True)
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=self.hparams.val_batch_size, num_workers=8,shuffle=False)
+        return DataLoader(self.val, batch_size=self.hparams.val_batch_size, num_workers=0,shuffle=False)
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=self.hparams.test_batch_size, num_workers=8,shuffle=False)
+        return DataLoader(self.test, batch_size=self.hparams.test_batch_size, num_workers=0,shuffle=False)
 
     @staticmethod
     def add_datamodule_specific_args(parent_parser):
