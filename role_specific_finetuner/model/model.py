@@ -31,13 +31,13 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
-    def forward(self, input_ids, attention_mask, role_ids, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels)
+    def forward(self, input_ids, attention_mask, role_ids, triple_ids, labels):
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, triple_ids=triple_ids, labels=labels)
         return outputs
 
     def _step(self, batch):
-        input_ids, attention_mask, role_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['labels']
-        outputs = self(input_ids, attention_mask, role_ids, labels)
+        input_ids, attention_mask, role_ids, triple_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['triple_ids'], batch['labels']
+        outputs = self(input_ids, attention_mask, role_ids, triple_ids, labels)
         loss = outputs[0]
         return loss
 
@@ -46,6 +46,7 @@ class FineTuner(pl.LightningModule):
             input_ids=batch['input_ids'],
             attention_mask=batch['attention_mask'],
             role_ids=batch['role_ids'],
+            triple_ids=batch['triple_ids'],
             use_cache=True,
             num_beams=self.hparams.eval_beams,
             max_length=self.hparams.tgt_max_seq_len
@@ -158,7 +159,6 @@ class FineTuner(pl.LightningModule):
         # data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
         # self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
 
-        
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)

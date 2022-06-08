@@ -44,29 +44,31 @@ class DS(Dataset):
         # input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
         target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
-        input_ids, attention_mask, role_ids = input_encoding['input_ids'], input_encoding['attention_mask'], input_encoding['role_ids']
+        input_ids, attention_mask, role_ids, triple_ids = input_encoding['input_ids'], input_encoding['attention_mask'], input_encoding['role_ids'], input_encoding['triple_ids']
         labels = target_encoding['input_ids']
         labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
 
-        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids,'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
+        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids, 'triple_ids': triple_ids, 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
         # squeeze() is needed to remove the batch dimension
 
     def role_specific_encoding(self, prefix, input_text):
         input_ids = []
         attention_mask = []
         role_ids = []
+        triple_ids = []
 
         prefix_tokenized = self.tokenizer.encode(prefix)[:-1]   # ignoring the eos token at the end
         input_ids.extend(prefix_tokenized)
         attention_mask.extend([1] * len(prefix_tokenized))
         role_ids.extend([0] * len(prefix_tokenized))
+        triple_ids.extend([0] * len(prefix_tokenized))
         try:
             # data = json.loads(input_text)
             data = eval(input_text)
         except json.decoder.JSONDecodeError:
             print(input_text)
             raise
-
+        triple_count = 1
         for triple in data:
             subject = triple[0]
             predicate = triple[1]
@@ -79,21 +81,27 @@ class DS(Dataset):
             input_ids.extend(subject_tokenized)
             attention_mask.extend([1] * len(subject_tokenized))
             role_ids.extend([1] * len(subject_tokenized))
+            triple_ids.extend([triple_count] * len(subject_tokenized))
 
             input_ids.extend(predicate_tokenized)
             attention_mask.extend([1] * len(predicate_tokenized))
             role_ids.extend([2] * len(predicate_tokenized))
+            triple_ids.extend([triple_count] * len(predicate_tokenized))
 
             input_ids.extend(object_tokenized)
             attention_mask.extend([1] * len(object_tokenized))
             role_ids.extend([3] * len(object_tokenized))
+            triple_ids.extend([triple_count] * len(object_tokenized))
+
+            triple_count += 1
         
         input_ids.extend([self.tokenizer.eos_token_id])
         input_ids = self.pad_and_truncate(input_ids)
         attention_mask = self.pad_and_truncate(attention_mask)
         role_ids = self.pad_and_truncate(role_ids)
+        triple_ids = self.pad_and_truncate(triple_ids)
 
-        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids}
+        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids, 'triple_ids': triple_ids}
     
     def pad_and_truncate(self, ids):
         if len(ids) > self.max_source_length:
