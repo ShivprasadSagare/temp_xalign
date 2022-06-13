@@ -841,7 +841,7 @@ class T5Stack_encoder(T5PreTrainedModel):
         self.dropout = nn.Dropout(config.dropout_rate)
 
         self.role_embed = nn.Embedding(4, config.d_model)
-        self.triple_embed = nn.Embedding(30, config.d_model)
+        # self.triple_embed = nn.Embedding(30, config.d_model)
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -893,7 +893,6 @@ class T5Stack_encoder(T5PreTrainedModel):
         self,
         input_ids=None,
         role_ids=None,
-        triple_ids=None,
         attention_mask=None,
         encoder_hidden_states=None,
         encoder_attention_mask=None,
@@ -936,8 +935,8 @@ class T5Stack_encoder(T5PreTrainedModel):
             # inputs_embeds = self.embed_tokens(input_ids)
             x = self.embed_tokens(input_ids)
             embed_role = self.role_embed(role_ids)
-            embed_triple = self.triple_embed(triple_ids)
-            inputs_embeds = x + embed_role + embed_triple
+            # embed_triple = self.triple_embed(triple_ids)
+            inputs_embeds = x + embed_role
 
         batch_size, seq_length = input_shape
 
@@ -1622,7 +1621,6 @@ class T5Model(T5PreTrainedModel):
         self,
         input_ids=None,
         role_ids=None,
-        triple_ids=None,
         attention_mask=None,
         decoder_input_ids=None,
         decoder_attention_mask=None,
@@ -1672,7 +1670,6 @@ class T5Model(T5PreTrainedModel):
             encoder_outputs = self.encoder(
                 input_ids=input_ids,
                 role_ids=role_ids,
-                triple_ids=triple_ids,
                 attention_mask=attention_mask,
                 inputs_embeds=inputs_embeds,
                 head_mask=head_mask,
@@ -1820,7 +1817,6 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
         self,
         input_ids=None,
         role_ids=None,
-        triple_ids=None,
         attention_mask=None,
         decoder_input_ids=None,
         decoder_attention_mask=None,
@@ -1883,7 +1879,6 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
             encoder_outputs = self.encoder(
                 input_ids=input_ids,
                 role_ids=role_ids,
-                triple_ids=triple_ids,
                 attention_mask=attention_mask,
                 inputs_embeds=inputs_embeds,
                 head_mask=head_mask,

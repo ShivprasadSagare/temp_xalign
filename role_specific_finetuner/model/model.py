@@ -1,17 +1,21 @@
 import pytorch_lightning as pl
-from transformers import AutoModelForSeq2SeqLM
+from transformers import AutoModelForSeq2SeqLM, AutoConfig
 import torch
 from sacrebleu import BLEU
 from indicnlp.transliterate import unicode_transliterate
+from model.mt5_copy_generator import MT5CopyGenerator
 
 
 class FineTuner(pl.LightningModule):
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.save_hyperparameters()
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            self.hparams.model_name_or_path
-        )
+        # self.model = AutoModelForSeq2SeqLM.from_pretrained(
+        #     self.hparams.model_name_or_path
+        # )
+        self.config = AutoConfig.from_pretrained(self.hparams.model_name_or_path)
+        self.config.update({"centrality": False, "tf_idf": False})
+        self.model = MT5CopyGenerator.from_pretrained(self.hparams.model_name_or_path, config=self.config)
         self.model.resize_token_embeddings(len(self.hparams.tokenizer))
         self.cal_bleu = BLEU()
         self.languages_map = {
@@ -31,36 +35,38 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
-    def forward(self, input_ids, attention_mask, role_ids, triple_ids, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, triple_ids=triple_ids, labels=labels)
+    def forward(self, input_ids, attention_mask, role_ids, labels):
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels)
         return outputs
 
     def _step(self, batch):
-        input_ids, attention_mask, role_ids, triple_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['triple_ids'], batch['labels']
-        outputs = self(input_ids, attention_mask, role_ids, triple_ids, labels)
+        input_ids, attention_mask, role_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['labels']
+        outputs = self(input_ids, attention_mask, role_ids, labels)
         loss = outputs[0]
         return loss
 
     def _generative_step(self, batch):
-        generated_ids = self.model.generate(
-            input_ids=batch['input_ids'],
-            attention_mask=batch['attention_mask'],
-            role_ids=batch['role_ids'],
-            triple_ids=batch['triple_ids'],
-            use_cache=True,
-            num_beams=self.hparams.eval_beams,
-            max_length=self.hparams.tgt_max_seq_len
-            # understand above 3 arguments
-            )
+        # kwargs = {
+        #     'attention_mask':batch['attention_mask'],
+        #     'role_ids':batch['role_ids'],
+        #     'use_cache':True,
+        #     'num_beams':self.hparams.eval_beams,
+        #     'max_length':self.hparams.tgt_max_seq_len
+        # }
+        # generated_ids = self.model.generate(
+        #     batch['input_ids'],
+        #     **kwargs
+        #     )
 
-        input_text = self.hparams.tokenizer.batch_decode(
-            batch['input_ids'],
-            skip_special_tokens=True)
-        pred_text = self.hparams.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
-        batch['labels'][batch['labels'] == -100] = self.hparams.tokenizer.pad_token_id
-        ref_text = self.hparams.tokenizer.batch_decode(batch['labels'], skip_special_tokens=True)
+        # input_text = self.hparams.tokenizer.batch_decode(
+        #     batch['input_ids'],
+        #     skip_special_tokens=True)
+        # pred_text = self.hparams.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+        # batch['labels'][batch['labels'] == -100] = self.hparams.tokenizer.pad_token_id
+        # ref_text = self.hparams.tokenizer.batch_decode(batch['labels'], skip_special_tokens=True)
 
-        return input_text, pred_text, ref_text
+        # return input_text, pred_text, ref_text
+        return [], [], []
 
     def training_step(self, batch, batch_idx):
         loss = self._step(batch)
@@ -85,18 +91,18 @@ class FineTuner(pl.LightningModule):
             input_text.extend(x['input_text'])
             pred_text.extend(x['pred_text'])
             ref_text.extend(x['ref_text'])
-        bleu = self.cal_bleu.corpus_score(pred_text, [ref_text])    
-        self.log("val_bleu", bleu.score)
+        # bleu = self.cal_bleu.corpus_score(pred_text, [ref_text])    
+        # self.log("val_bleu", bleu.score)
 
-        random_indices = set([len(input_text)//i for i in range(2, 7)])
-        epoch_list = [self.trainer.current_epoch for i in range(len(random_indices))]
+        # random_indices = set([len(input_text)//i for i in range(2, 7)])
+        # epoch_list = [self.trainer.current_epoch for i in range(len(random_indices))]
 
-        input_text = [input_text[i] for i in random_indices]
-        pred_text = [pred_text[i] for i in random_indices]
-        ref_text = [ref_text[i] for i in random_indices]
+        # input_text = [input_text[i] for i in random_indices]
+        # pred_text = [pred_text[i] for i in random_indices]
+        # ref_text = [ref_text[i] for i in random_indices]
 
-        data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
-        self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
+        # data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
+        # self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
 
     def test_step(self, batch, batch_idx):
         input_text, pred_text, ref_text = self._generative_step(batch)
