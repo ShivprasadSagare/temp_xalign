@@ -1,18 +1,18 @@
 #Activate conda environment xalign_role.
 #Following line is added to resolve the error 'Your shell has not been properly configured to use 'conda activate'. 
 #Uncomment and Pass the appropriate anaconda/miniconda path in the below line, if you face the error.
-# source ~/miniconda3/etc/profile.d/conda.sh
+source ~/miniconda3/etc/profile.d/conda.sh
 conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path='pass ckpt path here'
+checkpoint_path='None'
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/xalign_unified_script/train.csv' \
---val_path 'data/xalign_unified_script/val.csv' \
---test_path 'data/xalign_unified_script/test.csv' \
+--train_path 'data/xalign_unified_script_ordered_facts/train.csv' \
+--val_path 'data/xalign_unified_script_ordered_facts/val.csv' \
+--test_path 'data/xalign_unified_script_ordered_facts/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -29,5 +29,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
 --project_name 'swft' \
---run_name 'multilingual-pretrained-finetuning'
+--run_name 'multilingual-only-finetuning-ordered_facts'
 
