@@ -73,6 +73,11 @@ unzip xalign_unified_script.zip
 cd ..
 ```
 
+2.4 Multilingual finetuning experiment (with ordered facts)
+
+xalign finetuning data: [https://drive.google.com/file/d/1FR9Dpab5Z-hF0BM-IO1d-9MnElCNApaK/view?usp=sharing ](https://drive.google.com/file/d/1Yy4S0V1mRZ9nGHYhKevVDKLa4CcRlyuq/view?usp=sharing)
+
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
