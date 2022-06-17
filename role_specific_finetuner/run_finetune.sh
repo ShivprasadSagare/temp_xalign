@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -A research
-#SBATCH --gres=gpu:3
-#SBATCH -c 30
+#SBATCH --gres=gpu:2
+#SBATCH -c 20
 #SBATCH --time=4-00:00:00
 #SBATCH --mem-per-cpu=2G
 
@@ -16,7 +16,7 @@ checkpoint_path=None
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
---sanity_run yes \
+--sanity_run no \
 --train_path 'data/xalign_unified_script/train.csv' \
 --val_path 'data/xalign_unified_script/val.csv' \
 --test_path 'data/xalign_unified_script/test.csv' \
@@ -31,7 +31,7 @@ python3 train.py \
 --eval_beams 4 \
 --tgt_max_seq_len 128 \
 --checkpoint_path $checkpoint_path \
---gpus 3 \
+--gpus 2 \
 --max_epochs 5 \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \

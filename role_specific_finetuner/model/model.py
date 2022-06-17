@@ -35,47 +35,45 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
-    def forward(self, input_ids, attention_mask, role_ids, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels)
+    def forward(self, input_ids, attention_mask, labels):
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask,  labels=labels)
         return outputs
 
     def _step(self, batch):
-        input_ids, attention_mask, role_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['labels']
-        outputs = self(input_ids, attention_mask, role_ids, labels)
+        input_ids, attention_mask, labels = batch['input_ids'], batch['attention_mask'], batch['labels']
+        outputs = self(input_ids, attention_mask,labels)
         loss = outputs[0]
         return loss
 
     def _generative_step(self, batch):
-        # kwargs = {
-        #     'attention_mask':batch['attention_mask'],
-        #     'role_ids':batch['role_ids'],
-        #     'use_cache':True,
-        #     'num_beams':self.hparams.eval_beams,
-        #     'max_length':self.hparams.tgt_max_seq_len
-        # }
-        # generated_ids = self.model.generate(
-        #     batch['input_ids'],
-        #     **kwargs
-        #     )
+        kwargs = {
+            'attention_mask':batch['attention_mask'],
+            'num_beams':self.hparams.eval_beams,
+            'max_length':self.hparams.tgt_max_seq_len
+        }
+        generated_ids = self.model.generate(
+            batch['input_ids'],
+            **kwargs
+            )
 
-        # input_text = self.hparams.tokenizer.batch_decode(
-        #     batch['input_ids'],
-        #     skip_special_tokens=True)
-        # pred_text = self.hparams.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
-        # batch['labels'][batch['labels'] == -100] = self.hparams.tokenizer.pad_token_id
-        # ref_text = self.hparams.tokenizer.batch_decode(batch['labels'], skip_special_tokens=True)
+        input_text = self.hparams.tokenizer.batch_decode(
+            batch['input_ids'],
+            skip_special_tokens=True)
+        pred_text = self.hparams.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+        batch['labels'][batch['labels'] == -100] = self.hparams.tokenizer.pad_token_id
+        ref_text = self.hparams.tokenizer.batch_decode(batch['labels'], skip_special_tokens=True)
 
-        # return input_text, pred_text, ref_text
-        return [], [], []
+        return input_text, pred_text, ref_text
+        # return [], [], []
 
     def training_step(self, batch, batch_idx):
         loss = self._step(batch)
-        self.log("train_loss", loss, on_epoch=True)
+        self.log("train_loss", loss, on_epoch=True, on_step=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         loss = self._step(batch)
-        self.log("val_loss", loss, on_epoch=True)
+        self.log("val_loss", loss, on_epoch=True, on_step=True)
 
         input_text, pred_text, ref_text = self._generative_step(batch)
         return {'val_loss': loss, 'input_text': input_text, 'pred_text': pred_text, 'ref_text': ref_text}
