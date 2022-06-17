@@ -40,15 +40,15 @@ class DS(Dataset):
         prefix = f'rdf to {lang} text: '
         # prefix = f'rdf to en text: '
 
-        input_encoding = self.role_specific_encoding(prefix, input_text)
-        # input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        # input_encoding = self.role_specific_encoding(prefix, input_text)
+        input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
         target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
-        input_ids, attention_mask, role_ids = input_encoding['input_ids'], input_encoding['attention_mask'], input_encoding['role_ids']
+        input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
         labels = target_encoding['input_ids']
         labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
 
-        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids,'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
+        return {'input_ids': input_ids.squeeze(), 'attention_mask': attention_mask.squeeze(), 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
         # squeeze() is needed to remove the batch dimension
 
     def role_specific_encoding(self, prefix, input_text):

@@ -31,13 +31,13 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
-    def forward(self, input_ids, attention_mask, role_ids, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels)
+    def forward(self, input_ids, attention_mask, labels):
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
         return outputs
 
     def _step(self, batch):
-        input_ids, attention_mask, role_ids, labels = batch['input_ids'], batch['attention_mask'], batch['role_ids'], batch['labels']
-        outputs = self(input_ids, attention_mask, role_ids, labels)
+        input_ids, attention_mask, labels = batch['input_ids'], batch['attention_mask'],  batch['labels']
+        outputs = self(input_ids, attention_mask,labels)
         loss = outputs[0]
         return loss
 
@@ -45,7 +45,6 @@ class FineTuner(pl.LightningModule):
         generated_ids = self.model.generate(
             input_ids=batch['input_ids'],
             attention_mask=batch['attention_mask'],
-            role_ids=batch['role_ids'],
             use_cache=True,
             num_beams=self.hparams.eval_beams,
             max_length=self.hparams.tgt_max_seq_len
