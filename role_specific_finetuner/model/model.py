@@ -3,6 +3,7 @@ from transformers import AutoModelForSeq2SeqLM
 import torch
 from sacrebleu import BLEU
 from indicnlp.transliterate import unicode_transliterate
+import pandas as pd
 
 
 class FineTuner(pl.LightningModule):
@@ -118,6 +119,7 @@ class FineTuner(pl.LightningModule):
         return native_text
 
     def test_epoch_end(self, outputs):
+        df_to_write = pd.DataFrame(columns=['lang', 'input_text', 'ref_text', 'pred_text', 'bleu'])
         input_texts = []
         pred_texts = []
         ref_texts = []
@@ -147,6 +149,20 @@ class FineTuner(pl.LightningModule):
                 pass
 
         self.log("test_bleu", overall_bleu/len(self.languages_map))
+
+        for key in self.languages_map:
+            l = len(self.languages_map[key]['original_pred_text'])
+            self.languages_map[key]['bleus'] = [self.cal_bleu.corpus_score(self.languages_map[key]['original_pred_text'][i], [self.languages_map[key]['original_ref_text'][i]]).score for i in range(len(self.languages_map[key]['original_pred_text']))]
+            df_key = pd.DataFrame({
+                'lang':[key for i in range(l)],
+                'input_text':[self.languages_map[key]['original_input_text'][i] for i in range(l)],
+                'pred_text':[self.languages_map[key]['original_pred_text'][i] for i in range(l)],
+                'ref_text':[self.languages_map[key]['original_ref_text'][i] for i in range(l)],
+                'bleu':[self.languages_map[key]['bleu'][i] for i in range(l)]
+            })
+            df_to_write.concat(df_key, inplace=True)
+        
+        pd.to_csv('predictions.csv', sep='\t')
 
         # random_indices = set([len(self.languages_map['hi']['original_input_text'])//i for i in range(2, 7)])
         # epoch_list = [self.trainer.current_epoch for i in range(len(random_indices))]
