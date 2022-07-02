@@ -41,7 +41,7 @@ class DS(Dataset):
         # prefix = f'rdf to en text: '
 
         # input_encoding = self.role_specific_encoding(prefix, input_text)
-        input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        input_encoding = self.tokenizer(prefix+input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
         target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
         input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
