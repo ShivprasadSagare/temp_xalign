@@ -10,9 +10,9 @@ checkpoint_path='None'
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/xalign_unified_script_ordered_facts/train.csv' \
---val_path 'data/xalign_unified_script_ordered_facts/val.csv' \
---test_path 'data/xalign_unified_script_ordered_facts/test.csv' \
+--train_path 'data/xalign_unified_script_strategy_1/train.csv' \
+--val_path 'data/xalign_unified_script_strategy_1/val.csv' \
+--test_path 'data/xalign_unified_script_strategy_1/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -20,7 +20,7 @@ python3 train.py \
 --val_batch_size 4 \
 --test_batch_size 4 \
 --model_name_or_path 'google/mt5-small' \
---learning_rate 3e-5 \
+--learning_rate 1e-3 \
 --eval_beams 4 \
 --tgt_max_seq_len 128 \
 --checkpoint_path $checkpoint_path \
@@ -28,6 +28,6 @@ python3 train.py \
 --max_epochs 5 \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
---project_name 'swft' \
---run_name 'multilingual-only-finetuning-ordered_facts'
+--project_name 'xalign_input_encoding' \
+--run_name 'strategy_1_finetuning'
 
