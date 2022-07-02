@@ -16,7 +16,7 @@ checkpoint_path='wandb'
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
---sanity_run yes \
+--sanity_run no \
 --train_path 'data/xalign_unified_script/train.csv' \
 --val_path 'data/xalign_unified_script/val.csv' \
 --test_path 'data/xalign_unified_script/test.csv' \
