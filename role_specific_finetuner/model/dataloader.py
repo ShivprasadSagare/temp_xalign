@@ -32,7 +32,7 @@ class DS(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        input_text = self.df.iloc[idx]['input']
+        input_text = self.df.iloc[idx]['input'].replace('S|', '<H>').replace('P|', '<R>').replace('O|', '<T>')
         target_text = self.df.iloc[idx]['target']
         lang_code = self.df.iloc[idx]['lang']
         lang = self.languages_map[lang_code]['label']
@@ -41,7 +41,7 @@ class DS(Dataset):
         # prefix = f'rdf to en text: '
 
         # input_encoding = self.role_specific_encoding(prefix, input_text)
-        input_encoding = self.tokenizer(prefix+input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        input_encoding = self.plain_encoding(prefix, input_text)
         target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
         input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
@@ -95,6 +95,22 @@ class DS(Dataset):
 
         return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids}
     
+    def plain_encoding(self, prefix, input_text):
+        try:
+            # data = json.loads(input_text)
+            data = eval(input_text)
+        except json.decoder.JSONDecodeError:
+            print(input_text)
+            raise
+        
+        linearized_input = ''
+        for triple in data:
+            for item in triple:
+                linearized_input += item
+            
+        return self.tokenizer(prefix+linearized_input, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        
+
     def pad_and_truncate(self, ids):
         if len(ids) > self.max_source_length:
             return torch.tensor(ids[:self.max_source_length])
