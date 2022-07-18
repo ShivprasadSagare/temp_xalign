@@ -80,7 +80,7 @@ xalign finetuning data: [https://drive.google.com/file/d/1FR9Dpab5Z-hF0BM-IO1d-9
 
 2.5 SWFT multilingual pretraining and then XAlign finetuning
 
-<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`.
+<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I>
 
 
 pretraining data: https://drive.google.com/file/d/18FdyPIR86wD8hvUYC-sU_BEO4WZeurXv/view?usp=sharing<br>
