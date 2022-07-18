@@ -78,6 +78,25 @@ cd ..
 xalign finetuning data: [https://drive.google.com/file/d/1FR9Dpab5Z-hF0BM-IO1d-9MnElCNApaK/view?usp=sharing ](https://drive.google.com/file/d/1Yy4S0V1mRZ9nGHYhKevVDKLa4CcRlyuq/view?usp=sharing)
 
 
+2.5 SWFT multilingual pretraining and then XAlign finetuning
+
+pretraining data: https://drive.google.com/file/d/18FdyPIR86wD8hvUYC-sU_BEO4WZeurXv/view?usp=sharing<br>
+finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
+
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
+```
+mkdir data
+cd data
+
+gdown 18FdyPIR86wD8hvUYC-sU_BEO4WZeurXv
+unzip wiki_pretraining.zip
+
+gdown 1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4
+unzip xalign_finetuning.zip
+
+cd ..
+```
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
