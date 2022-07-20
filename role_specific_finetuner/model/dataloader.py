@@ -106,7 +106,7 @@ class DS(Dataset):
         linearized_input = ''
         for triple in data:
             for item in triple:
-                linearized_input += item
+                linearized_input += str(item)
             
         return self.tokenizer(prefix+linearized_input, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
         

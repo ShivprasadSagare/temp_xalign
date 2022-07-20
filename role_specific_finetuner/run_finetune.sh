@@ -10,9 +10,9 @@ checkpoint_path='None'
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/xalign_unified_script_strategy_1/train.csv' \
---val_path 'data/xalign_unified_script_strategy_1/val.csv' \
---test_path 'data/xalign_unified_script_strategy_1/test.csv' \
+--train_path 'data/xalign_finetuning/train.csv' \
+--val_path 'data/xalign_finetuning/val.csv' \
+--test_path 'data/xalign_finetuning/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -28,6 +28,6 @@ python3 train.py \
 --max_epochs 5 \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
---project_name 'xalign_input_encoding' \
---run_name 'strategy_1_finetuning'
+--project_name 'xalign' \
+--run_name 'finetuning'
 
