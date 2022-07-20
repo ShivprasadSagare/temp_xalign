@@ -129,7 +129,7 @@ Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, 
 
 <I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I>
 
-pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing<br>
+pretraining data: https://drive.google.com/file/d/13Yb7eGuZ3-C3JdWQnFC0UepwQXbfGgJh/view?usp=sharing<br>
 finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
 
 Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
@@ -137,7 +137,7 @@ Alternatively, you can use following gdown commands to directly download it, and
 mkdir data
 cd data
 
-gdown 1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD
+gdown 13Yb7eGuZ3-C3JdWQnFC0UepwQXbfGgJh
 unzip wiki_pretraining.zip
 
 gdown 1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4
@@ -146,6 +146,13 @@ unzip xalign_finetuning.zip
 cd ..
 ```
 Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, run `run_finetune.sh` with the checkpoint_path argument in it set to the checkpoint path created from previous pretraining. Set other hyperparams as well before running.
+
+2.8 XAlign finetuning with enhanced encoding strategy (role_specific encoding)
+<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first switch the branch `role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I>
+
+finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
+
+Then run the file `run_finetuning.sh` with proper hyperparams edited in it. Set the checkpoint path to None.
 
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
