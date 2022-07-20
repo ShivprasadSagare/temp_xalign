@@ -12,14 +12,14 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path='wandb'
+checkpoint_path=None
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
---sanity_run no \
---train_path 'data/xalign_unified_script/train.csv' \
---val_path 'data/xalign_unified_script/val.csv' \
---test_path 'data/xalign_unified_script/test.csv' \
+--sanity_run yes \
+--train_path 'data/xalign_finetuning/train.csv' \
+--val_path 'data/xalign_finetuning/val.csv' \
+--test_path 'data/xalign_finetuning/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -36,5 +36,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
 --project_name 'swft' \
---run_name 'multilingual-predictions'
+--run_name 'finetuning'
 

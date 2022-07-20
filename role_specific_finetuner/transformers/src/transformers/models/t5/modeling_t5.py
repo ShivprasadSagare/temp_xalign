@@ -840,7 +840,7 @@ class T5Stack_encoder(T5PreTrainedModel):
         self.final_layer_norm = T5LayerNorm(config.d_model, eps=config.layer_norm_epsilon)
         self.dropout = nn.Dropout(config.dropout_rate)
 
-        self.role_embed = nn.Embedding(4, config.d_model)
+        self.role_embed = nn.Embedding(6, config.d_model)
 
         # Initialize weights and apply final processing
         self.post_init()

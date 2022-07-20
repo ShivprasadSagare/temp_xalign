@@ -32,7 +32,7 @@ class DS(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        input_text = self.df.iloc[idx]['input']
+        input_text = self.df.iloc[idx]['input'].replace('S|', '<H>').replace('P|', '<R>').replace('O|', '<T>')
         target_text = self.df.iloc[idx]['target']
         lang_code = self.df.iloc[idx]['lang']
         lang = self.languages_map[lang_code]['label']
@@ -41,14 +41,14 @@ class DS(Dataset):
         # prefix = f'rdf to en text: '
 
         input_encoding = self.role_specific_encoding(prefix, input_text)
-        # input_encoding = self.tokenizer(input_text, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        # input_encoding = self.plain_encoding(prefix, input_text)
         target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
         input_ids, attention_mask, role_ids = input_encoding['input_ids'], input_encoding['attention_mask'], input_encoding['role_ids']
         labels = target_encoding['input_ids']
         labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
 
-        return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids,'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
+        return {'input_ids': input_ids.squeeze(), 'attention_mask': attention_mask.squeeze(), 'role_ids': role_ids.squeeze(), 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
         # squeeze() is needed to remove the batch dimension
 
     def role_specific_encoding(self, prefix, input_text):
@@ -59,7 +59,7 @@ class DS(Dataset):
         prefix_tokenized = self.tokenizer.encode(prefix)[:-1]   # ignoring the eos token at the end
         input_ids.extend(prefix_tokenized)
         attention_mask.extend([1] * len(prefix_tokenized))
-        role_ids.extend([0] * len(prefix_tokenized))
+        role_ids.extend([5] * len(prefix_tokenized))
         try:
             # data = json.loads(input_text)
             data = eval(input_text)
@@ -68,26 +68,42 @@ class DS(Dataset):
             raise
 
         for triple in data:
-            subject = triple[0]
-            predicate = triple[1]
-            object = triple[2]
+            temp = triple[0]
+            if '<H>' in temp:
+                subject = triple[0]
+                subject_tokenized = self.tokenizer.encode(subject)[:-1]
+                input_ids.extend(subject_tokenized)
+                attention_mask.extend([1] * len(subject_tokenized))
+                role_ids.extend([0] * len(subject_tokenized))
+                
+            elif '<R>' in temp:
+                predicate = triple[0]
+                object = triple[1]
+                predicate_tokenized = self.tokenizer.encode(predicate)[:-1]
+                object_tokenized = self.tokenizer.encode(object)[:-1]
 
-            subject_tokenized = self.tokenizer.encode(subject)[:-1]
-            predicate_tokenized = self.tokenizer.encode(predicate)[:-1]
-            object_tokenized = self.tokenizer.encode(object)[:-1]
+                input_ids.extend(predicate_tokenized)
+                attention_mask.extend([1] * len(predicate_tokenized))
+                role_ids.extend([1] * len(predicate_tokenized))
 
-            input_ids.extend(subject_tokenized)
-            attention_mask.extend([1] * len(subject_tokenized))
-            role_ids.extend([1] * len(subject_tokenized))
+                input_ids.extend(object_tokenized)
+                attention_mask.extend([1] * len(object_tokenized))
+                role_ids.extend([2] * len(object_tokenized))
 
-            input_ids.extend(predicate_tokenized)
-            attention_mask.extend([1] * len(predicate_tokenized))
-            role_ids.extend([2] * len(predicate_tokenized))
+            else:
+                predicate = triple[0]
+                object = triple[1]
+                predicate_tokenized = self.tokenizer.encode(predicate)[:-1]
+                object_tokenized = self.tokenizer.encode(object)[:-1]
 
-            input_ids.extend(object_tokenized)
-            attention_mask.extend([1] * len(object_tokenized))
-            role_ids.extend([3] * len(object_tokenized))
-        
+                input_ids.extend(predicate_tokenized)
+                attention_mask.extend([1] * len(predicate_tokenized))
+                role_ids.extend([3] * len(predicate_tokenized))
+
+                input_ids.extend(object_tokenized)
+                attention_mask.extend([1] * len(object_tokenized))
+                role_ids.extend([4] * len(object_tokenized))
+
         input_ids.extend([self.tokenizer.eos_token_id])
         input_ids = self.pad_and_truncate(input_ids)
         attention_mask = self.pad_and_truncate(attention_mask)
@@ -95,6 +111,22 @@ class DS(Dataset):
 
         return {'input_ids': input_ids, 'attention_mask': attention_mask, 'role_ids': role_ids}
     
+    def plain_encoding(self, prefix, input_text):
+        try:
+            # data = json.loads(input_text)
+            data = eval(input_text)
+        except json.decoder.JSONDecodeError:
+            print(input_text)
+            raise
+        
+        linearized_input = ''
+        for triple in data:
+            for item in triple:
+                linearized_input += item
+            
+        return self.tokenizer(prefix+linearized_input, return_tensors='pt', max_length=self.max_source_length ,padding='max_length', truncation=True)
+        
+
     def pad_and_truncate(self, ids):
         if len(ids) > self.max_source_length:
             return torch.tensor(ids[:self.max_source_length])
@@ -105,8 +137,8 @@ class DS(Dataset):
     @staticmethod
     def create_tokenizer(tokenizer_name_or_path):
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
-        tokenizer.add_tokens(['S|', 'P|', 'O|'])
-        print("we added S|, P|, O| to the tokenizer")
+        tokenizer.add_tokens(['<H>', '<R>', '<T>', '<QH>', '<QR>', '<QT>'])
+        print("we added HRT QHRT to the tokenizer")
         return tokenizer
 
 class DataModule(pl.LightningDataModule):

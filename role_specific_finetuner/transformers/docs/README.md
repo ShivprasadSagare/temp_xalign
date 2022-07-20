@@ -50,11 +50,32 @@ You can adapt the `--build_dir` to set any temporary folder that you prefer. Thi
 the MDX files that will be rendered as the documentation on the main website. You can inspect them in your favorite
 Markdown editor.
 
+## Previewing the documentation
+
+To preview the docs, first install the `watchdog` module with:
+
+```bash
+pip install watchdog
+```
+
+Then run the following command:
+
+```bash
+doc-builder preview {package_name} {path_to_docs}
+```
+
+For example:
+
+```bash
+doc-builder preview transformers docs/source/en/
+```
+
+The docs will be viewable at [http://localhost:3000](http://localhost:3000). You can also preview the docs once you have opened a PR. You will see a bot add a comment to a link where the documentation with your changes lives.
+
 ---
 **NOTE**
 
-It's not possible to see locally how the final documentation will look like for now. Once you have opened a PR, you
-will see a bot add a comment to a link where the documentation with your changes lives.
+The `preview` command only works with existing doc files. When you add a completely new file, you need to update `_toctree.yml` & restart `preview` command (`ctrl-c` to stop it & call `doc-builder preview ...` again).
 
 ---
 
@@ -63,7 +84,7 @@ will see a bot add a comment to a link where the documentation with your changes
 Accepted files are Markdown (.md or .mdx).
 
 Create a file with its extension and put it in the source directory. You can then link it to the toc-tree by putting
-the filename without the extension in the [`_toctree.yml`](https://github.com/huggingface/transformers/blob/master/docs/source/_toctree.yml) file.
+the filename without the extension in the [`_toctree.yml`](https://github.com/huggingface/transformers/blob/main/docs/source/_toctree.yml) file.
 
 ## Renaming section headers and moving sections
 
@@ -88,7 +109,7 @@ Sections that were moved:
 
 Use the relative style to link to the new file so that the versioned docs continue to work.
 
-For an example of a rich moved sections set please see the very end of [the Trainer doc](https://github.com/huggingface/transformers/blob/master/docs/source/main_classes/trainer.mdx).
+For an example of a rich moved sections set please see the very end of [the Trainer doc](https://github.com/huggingface/transformers/blob/main/docs/source/main_classes/trainer.mdx).
 
 
 ## Writing Documentation - Specification
@@ -107,6 +128,11 @@ Adding a new tutorial or section is done in two steps:
 Make sure to put your new file under the proper section. It's unlikely to go in the first section (*Get Started*), so
 depending on the intended targets (beginners, more advanced users or researchers) it should go in section two, three or
 four.
+
+### Translating
+
+When translating, refer to the guide at [./TRANSLATING.md](https://github.com/huggingface/transformers/blob/main/docs/TRANSLATING.md).
+
 
 ### Adding a new model
 
@@ -172,9 +198,9 @@ adds a link to its documentation with this syntax: \[\`XXXClass\`\] or \[\`funct
 function to be in the main package.
 
 If you want to create a link to some internal class or function, you need to
-provide its path. For instance: \[\`file_utils.ModelOutput\`\]. This will be converted into a link with
-`file_utils.ModelOutput` in the description. To get rid of the path and only keep the name of the object you are
-linking to in the description, add a ~: \[\`~file_utils.ModelOutput\`\] will generate a link with `ModelOutput` in the description.
+provide its path. For instance: \[\`utils.ModelOutput\`\]. This will be converted into a link with
+`utils.ModelOutput` in the description. To get rid of the path and only keep the name of the object you are
+linking to in the description, add a ~: \[\`~utils.ModelOutput\`\] will generate a link with `ModelOutput` in the description.
 
 The same works for methods so you can either use \[\`XXXClass.method\`\] or \[~\`XXXClass.method\`\].
 
@@ -349,6 +375,13 @@ You will first need to run the following command (from the root of the repositor
 python utils/prepare_for_doc_test.py src docs
 ```
 
+If you work on a specific python module, say `modeling_wav2vec2.py`, you can run the command as follows (to avoid the unnecessary temporary changes in irrelevant files):
+
+```bash
+python utils/prepare_for_doc_test.py src/transformers/utils/doc.py src/transformers/models/wav2vec2/modeling_wav2vec2.py
+```
+(`utils/doc.py` should always be included)
+
 Then you can run all the tests in the docstrings of a given file with the following command, here is how we test the modeling file of Wav2Vec2 for instance:
 
 ```bash
@@ -395,4 +428,4 @@ Here are a few tips to help you debug the doctests and make them pass:
   * whitespace: one give whitespace (space, tabulation, new line) is equivalent to any number of whitespace, so you can add new lines where there are spaces to make your output more readable.
   * numerical values: you should never put more than 4 or 5 digits to expected results as different setups or library versions might get you slightly different results. `doctest` is configure to ignore any difference lower than the precision to which you wrote (so 1e-4 if you write 4 digits).
 - Don't leave a block of code that is very long to execute. If you can't make it fast, you can either not use the doctest syntax on it (so that it's ignored), or if you want to use the doctest syntax to show the results, you can add a comment `# doctest: +SKIP` at the end of the lines of code too long to execute
-- Each line of code that produces a result needs to have that result written below. You can ignore an output if you don't want to show it in your code example by adding a comment ` # doctest: +IGNORE_RESULT` at the end of the line of code produing it.
+- Each line of code that produces a result needs to have that result written below. You can ignore an output if you don't want to show it in your code example by adding a comment ` # doctest: +IGNORE_RESULT` at the end of the line of code producing it.
