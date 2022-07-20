@@ -125,6 +125,28 @@ cd ..
 ```
 Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, run `run_finetune.sh` with the checkpoint_path argument in it set to the checkpoint path created from previous pretraining. Set other hyperparams as well before running.
 
+2.7 SWFT only_en pretraining and then XAlign finetuning
+
+<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I>
+
+pretraining data: https://drive.google.com/file/d/1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD/view?usp=sharing<br>
+finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
+
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
+```
+mkdir data
+cd data
+
+gdown 1JKPzlkfusE0rkpm3q0CBRc6cwSk2CzzD
+unzip wiki_pretraining.zip
+
+gdown 1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4
+unzip xalign_finetuning.zip
+
+cd ..
+```
+Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, run `run_finetune.sh` with the checkpoint_path argument in it set to the checkpoint path created from previous pretraining. Set other hyperparams as well before running.
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
