@@ -28,12 +28,12 @@ python3 train.py \
 --gpus 2 \
 --max_epochs 5 \
 --strategy 'ddp' \
---log_dir '/scratch/experiments' \
+--log_dir 'experiments' \
 --project_name 'swft' \
 --run_name 'multilingual_pretraining'
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path='/scratch/experiments/model.ckpt'
+checkpoint_path='experiments/model.ckpt'
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
