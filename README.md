@@ -99,7 +99,7 @@ unzip xalign_finetuning.zip
 
 cd ..
 ```
-Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, run `run_finetune.sh` with the checkpoint_path argument in it set to the checkpoint path created from previous pretraining. Set other hyperparams as well before running.
+Then run the file `run_both.sh` to run pretraining and finetuning sequentially automatically. Set `log_dir` and subsequent `checkpoint_path` correctly. Set other hyperparams as well before running.
 
 
 2.6 KGPT multilingual pretraining and then XAlign finetuning
