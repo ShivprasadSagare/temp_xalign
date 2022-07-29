@@ -154,6 +154,17 @@ finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcj
 
 Then run the file `run_finetuning.sh` with proper hyperparams edited in it. Set the checkpoint path to None.
 
+
+2.9 XAlign finetuning with copy_mechanism and role_specific encoding combined
+
+Switch to the branch `role_ids_copy`.
+<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first switch the branch `role_ids_copy`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I>
+
+finetuning data: https://drive.google.com/file/d/1R-PjPp2ylKKWkkoLxbJz3c_vxszBqsTv/view?usp=sharing
+
+Then run the file `run_finetuning.sh` with proper hyperparams edited in it. Set the checkpoint path to None.
+
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
