@@ -115,25 +115,21 @@ class FineTuner(pl.LightningModule):
                 )
                 
                 output_logits = outputs.logits.softmax(dim=-1)
+                decoder_last_states = outputs.decoder_hidden_states[-1]
+                encoder_last_states = outputs.encoder_last_hidden_state
+                copy_gate = torch.sigmoid(self.gate(decoder_last_states))
+                full_vocab_prob = (1 - copy_gate) * output_logits
+                scores = torch.bmm(decoder_last_states, encoder_last_states.transpose(2, 1))
+    #             print("encoder_input_ids", encoder_input_ids.shape)
+    #             print("decoder_input_ids", input_ids.shape)
+                dec_enc_attn_mask = self.get_attn_key_pad_mask(encoder_input_ids, input_ids)
                 
-                if self.enable_copy:
-                    decoder_last_states = outputs.decoder_hidden_states[-1]
-                    encoder_last_states = outputs.encoder_last_hidden_state
-                    copy_gate = torch.sigmoid(self.gate(decoder_last_states))
-                    full_vocab_prob = (1 - copy_gate) * output_logits
-                    scores = torch.bmm(decoder_last_states, encoder_last_states.transpose(2, 1))
-        #             print("encoder_input_ids", encoder_input_ids.shape)
-        #             print("decoder_input_ids", input_ids.shape)
-                    dec_enc_attn_mask = self.get_attn_key_pad_mask(encoder_input_ids, input_ids)
-                    
-                    scores = scores.masked_fill(dec_enc_attn_mask, -np.inf)
-                    oov_vocab_prob = torch.softmax(scores, -1)
-                    full_vocab_prob = full_vocab_prob.scatter_add(2, encoder_input_ids.unsqueeze(1).repeat(1, full_vocab_prob.shape[1], 1), oov_vocab_prob * copy_gate)
-                    output_logits = torch.log(full_vocab_prob + 1e-8)
-                else:
-                    output_logits = torch.log(output_logits + 1e-8)
+                scores = scores.masked_fill(dec_enc_attn_mask, -np.inf)
+                oov_vocab_prob = torch.softmax(scores, -1)
+                full_vocab_prob = full_vocab_prob.scatter_add(2, encoder_input_ids.unsqueeze(1).repeat(1, full_vocab_prob.shape[1], 1), oov_vocab_prob * copy_gate)
+                final_output_logits = torch.log(full_vocab_prob + 1e-8)
                 
-                next_token_scores = output_logits[:, -1, :]
+                next_token_scores = final_output_logits[:, -1, :]
 
                 next_token_scores = logits_processor(input_ids, next_token_scores)
                 next_token_scores = next_token_scores + beam_scores[:, None].expand_as(next_token_scores)
