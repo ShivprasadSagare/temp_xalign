@@ -3,6 +3,18 @@ from transformers import AutoModelForSeq2SeqLM
 import torch
 from sacrebleu import BLEU
 from indicnlp.transliterate import unicode_transliterate
+import torch.nn as nn
+import numpy as np
+from typing import Optional, Union
+
+from transformers import (
+    BeamSearchScorer,
+    BeamScorer,
+    LogitsProcessorList, 
+    StoppingCriteriaList,
+    MaxLengthCriteria
+)
+from transformers.generation_utils import BeamSearchOutput
 
 
 class FineTuner(pl.LightningModule):
@@ -13,6 +25,7 @@ class FineTuner(pl.LightningModule):
             self.hparams.model_name_or_path
         )
         self.model.resize_token_embeddings(len(self.hparams.tokenizer))
+        self.gate = nn.Linear(self.model.config.d_model, 1)
         self.cal_bleu = BLEU()
         self.languages_map = {
             'en': {"label": "English", 'id': 0},
@@ -31,21 +44,224 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
+    def get_attn_key_pad_mask(self, seq_k, seq_q):
+        ''' For masking out the padding part of key sequence. '''
+        # Expand to fit the shape of key query attention matrix.
+        len_q = seq_q.size(1)
+        padding_mask = seq_k.eq(self.hparams.tokenizer.pad_token_id)
+        padding_mask = padding_mask.unsqueeze(1).expand(-1, len_q, -1)  # b x lq x lk
+        return padding_mask
+
     def forward(self, input_ids, attention_mask, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-        return outputs
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels, output_hidden_states=True)
+        output_logits = outputs.logits.softmax(dim=-1)
+
+        # copy mechanism code
+        decoder_last_states = outputs.decoder_hidden_states[-1]
+        encoder_last_states = outputs.encoder_last_hidden_state
+        copy_gate = torch.sigmoid(self.gate(decoder_last_states))
+        full_vocab_prob = (1 - copy_gate) * output_logits
+        scores = torch.bmm(decoder_last_states, encoder_last_states.transpose(2, 1))
+        dec_enc_attn_mask = self.get_attn_key_pad_mask(input_ids, labels)
+    
+        scores = scores.masked_fill(dec_enc_attn_mask, -np.inf)
+        oov_vocab_prob = torch.softmax(scores, -1)
+        full_vocab_prob = full_vocab_prob.scatter_add(2, input_ids.unsqueeze(1).repeat(1, full_vocab_prob.shape[1], 1), oov_vocab_prob * copy_gate)
+        return torch.log(full_vocab_prob + 1e-8)
+
+    def beam_search(
+        self,
+        encoder_input_ids: torch.LongTensor, 
+        input_ids: torch.LongTensor,
+        beam_scorer: BeamScorer,
+        logits_processor: Optional[LogitsProcessorList] = None,
+        stopping_criteria: Optional[StoppingCriteriaList] = None,
+        pad_token_id: Optional[int] = None,
+        eos_token_id: Optional[int] = None,
+        **model_kwargs,
+        ) -> Union[BeamSearchOutput, torch.LongTensor]:
+            # init values
+            logits_processor = logits_processor if logits_processor is not None else LogitsProcessorList()
+            stopping_criteria = stopping_criteria if stopping_criteria is not None else StoppingCriteriaList()
+            pad_token_id = pad_token_id if pad_token_id is not None else self.model.config.pad_token_id
+            eos_token_id = eos_token_id if eos_token_id is not None else self.model.config.eos_token_id
+
+            # init attention / hidden states / scores tuples
+            scores = None
+            decoder_attentions = None
+            cross_attentions = None
+            decoder_hidden_states = None
+
+            batch_size = len(beam_scorer._beam_hyps)
+            num_beams = beam_scorer.num_beams
+
+            batch_beam_size, cur_len = input_ids.shape
+
+            if num_beams * batch_size != batch_beam_size:
+                raise ValueError(
+                    f"Batch dimension of `input_ids` should be {num_beams * batch_size}, but is {batch_beam_size}."
+                )
+
+            beam_scores = torch.zeros((batch_size, num_beams), dtype=torch.float, device=input_ids.device)
+            beam_scores[:, 1:] = -1e9
+            beam_scores = beam_scores.view((batch_size * num_beams,))
+
+            while True:
+                model_inputs = self.model.prepare_inputs_for_generation(input_ids, **model_kwargs)
+                outputs = self.model(
+                    **model_inputs,
+                    return_dict=True,
+                    output_hidden_states=True
+                )
+                
+                output_logits = outputs.logits.softmax(dim=-1)
+                
+                if self.enable_copy:
+                    decoder_last_states = outputs.decoder_hidden_states[-1]
+                    encoder_last_states = outputs.encoder_last_hidden_state
+                    copy_gate = torch.sigmoid(self.gate(decoder_last_states))
+                    full_vocab_prob = (1 - copy_gate) * output_logits
+                    scores = torch.bmm(decoder_last_states, encoder_last_states.transpose(2, 1))
+        #             print("encoder_input_ids", encoder_input_ids.shape)
+        #             print("decoder_input_ids", input_ids.shape)
+                    dec_enc_attn_mask = self.get_attn_key_pad_mask(encoder_input_ids, input_ids)
+                    
+                    scores = scores.masked_fill(dec_enc_attn_mask, -np.inf)
+                    oov_vocab_prob = torch.softmax(scores, -1)
+                    full_vocab_prob = full_vocab_prob.scatter_add(2, encoder_input_ids.unsqueeze(1).repeat(1, full_vocab_prob.shape[1], 1), oov_vocab_prob * copy_gate)
+                    output_logits = torch.log(full_vocab_prob + 1e-8)
+                else:
+                    output_logits = torch.log(output_logits + 1e-8)
+                
+                next_token_scores = output_logits[:, -1, :]
+
+                next_token_scores = logits_processor(input_ids, next_token_scores)
+                next_token_scores = next_token_scores + beam_scores[:, None].expand_as(next_token_scores)
+
+                # reshape for beam search
+                vocab_size = next_token_scores.shape[-1]
+                next_token_scores = next_token_scores.view(batch_size, num_beams * vocab_size)
+
+                next_token_scores, next_tokens = torch.topk(
+                    next_token_scores, 2 * num_beams, dim=1, largest=True, sorted=True
+                )
+
+                next_indices = (next_tokens / vocab_size).long()
+                next_tokens = next_tokens % vocab_size
+
+                # stateless
+                beam_outputs = beam_scorer.process(
+                    input_ids,
+                    next_token_scores,
+                    next_tokens,
+                    next_indices,
+                    pad_token_id=pad_token_id,
+                    eos_token_id=eos_token_id,
+                )
+                beam_scores = beam_outputs["next_beam_scores"]
+                beam_next_tokens = beam_outputs["next_beam_tokens"]
+                beam_idx = beam_outputs["next_beam_indices"]
+
+                input_ids = torch.cat([input_ids[beam_idx, :], beam_next_tokens.unsqueeze(-1)], dim=-1)
+
+                model_kwargs = self.model._update_model_kwargs_for_generation(
+                    outputs, model_kwargs, is_encoder_decoder=self.model.config.is_encoder_decoder
+                )
+                if model_kwargs["past"] is not None:
+                    model_kwargs["past"] = self.model._reorder_cache(model_kwargs["past"], beam_idx)
+
+                # increase cur_len
+                cur_len = cur_len + 1
+
+                if beam_scorer.is_done or stopping_criteria(input_ids, scores):
+                    break
+                    
+            sequence_outputs = beam_scorer.finalize(
+                input_ids,
+                beam_scores,
+                next_tokens,
+                next_indices,
+                pad_token_id=pad_token_id,
+                eos_token_id=eos_token_id,
+                max_length=stopping_criteria.max_length,
+            )
+
+            return sequence_outputs["sequences"]
+
+    def custom_generate(self,
+                    inputs, 
+                    attention_mask, 
+                    num_beams=5,
+                    max_length=200,
+                    length_penalty=1.0):
+        model_kwargs = {}
+        pad_token_id = self.model.config.pad_token_id
+        bos_token_id = self.model.config.bos_token_id
+        eos_token_id = self.model.config.eos_token_id
+        
+        stopping_criteria = StoppingCriteriaList([MaxLengthCriteria(max_length=max_length)])
+        logits_processor = LogitsProcessorList()
+        
+        inputs_tensor, model_input_name, model_kwargs = self.model._prepare_model_inputs(inputs, bos_token_id, model_kwargs)
+        
+        batch_size = inputs_tensor.shape[0]
+        model_kwargs.update({"attention_mask": attention_mask, "use_cache": True})
+        
+        model_kwargs = self.model._prepare_encoder_decoder_kwargs_for_generation(
+                            inputs_tensor, model_kwargs, model_input_name
+                        )
+        
+        # decoder input ids
+        input_ids = self.model._prepare_decoder_input_ids_for_generation(
+                    batch_size,
+                    decoder_start_token_id=None,
+                    bos_token_id=bos_token_id,
+                    model_kwargs=model_kwargs,
+                )
+        
+        beam_scorer = BeamSearchScorer(
+                    batch_size=batch_size,
+                    num_beams=num_beams,
+                    device=inputs_tensor.device,
+                    length_penalty=length_penalty,
+                    do_early_stopping=False,
+                )
+                
+        input_ids, model_kwargs = self.model._expand_inputs_for_generation(
+            input_ids, expand_size=num_beams, is_encoder_decoder=True, **model_kwargs)
+        
+        expanded_return_idx = (
+                torch.arange(inputs_tensor.shape[0]).view(-1, 1).repeat(1, num_beams).view(-1).to(inputs_tensor.device)
+            )
+        
+        encoder_input_ids = inputs_tensor.index_select(0, expanded_return_idx)
+        
+        return self.beam_search(
+                    encoder_input_ids,
+                    input_ids,
+                    beam_scorer,
+                    logits_processor=logits_processor,
+                    stopping_criteria=stopping_criteria,
+                    pad_token_id=pad_token_id,
+                    eos_token_id=eos_token_id,
+                    **model_kwargs,
+                )
 
     def _step(self, batch):
         input_ids, attention_mask, labels = batch['input_ids'], batch['attention_mask'],  batch['labels']
-        outputs = self(input_ids, attention_mask,labels)
-        loss = outputs[0]
+        lm_labels = torch.clone(labels)
+        lm_labels[lm_labels[:, :] == self.hparams.tokenizer.pad_token_id] = -100
+        logits = self(input_ids, attention_mask, labels)
+
+        loss_fct = nn.CrossEntropyLoss(ignore_index=-100)
+        loss = loss_fct(logits.view(-1, logits.size(-1)), lm_labels.view(-1))
+
         return loss
 
     def _generative_step(self, batch):
-        generated_ids = self.model.generate(
-            input_ids=batch['input_ids'],
-            attention_mask=batch['attention_mask'],
-            use_cache=True,
+        generated_ids = self.custom_generate(
+            batch['input_ids'],
+            batch['attention_mask'],
             num_beams=self.hparams.eval_beams,
             max_length=self.hparams.tgt_max_seq_len
             # understand above 3 arguments
