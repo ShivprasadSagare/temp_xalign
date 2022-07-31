@@ -34,5 +34,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'predicting_HRT_multi_pre_fine_ckpt_on_HRT_data'
+--run_name 'predicting_HRT_en_pre_fine_ckpt_on_HRT_data'
 

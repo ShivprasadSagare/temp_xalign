@@ -171,7 +171,7 @@ class FineTuner(pl.LightningModule):
             })
             df_to_write = pd.concat([df_to_write, df_key])
         
-        df_to_write.to_csv('predictions_HRT_multi.csv', sep='\t')
+        df_to_write.to_csv('predictions_HRT_en.csv', sep='\t')
 
 
     def configure_optimizers(self):
