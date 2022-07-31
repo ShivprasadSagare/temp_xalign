@@ -7,17 +7,17 @@
 
 #Activate conda environment role_spec
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate role_spec
+conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path=None
+checkpoint_path=wandb
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/wiki/train_multilingual_translated.csv' \
---val_path 'data/xalign_unified_script/val.csv' \
---test_path 'data/xalign_unified_script/test.csv' \
+--train_path 'data/xalign_SPO_original/train.csv' \
+--val_path 'data/xalign_SPO_original/val.csv' \
+--test_path 'data/xalign_SPO_original/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -29,10 +29,10 @@ python3 train.py \
 --eval_beams 4 \
 --tgt_max_seq_len 128 \
 --checkpoint_path $checkpoint_path \
---gpus 1 \
+--gpus 2 \
 --max_epochs 2 \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'pretraining_multilingual'
+--run_name 'predicting_SPO_multi_pre_fine_ckpt_onoriginal_SPO_data'
 
