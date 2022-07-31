@@ -7,7 +7,7 @@
 
 #Activate conda environment role_spec
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate xalign_role
+conda activate base
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
 checkpoint_path=wandb
@@ -15,9 +15,9 @@ checkpoint_path=wandb
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run no \
---train_path 'data/xalign_finetuning/train.csv' \
---val_path 'data/xalign_finetuning/val.csv' \
---test_path 'data/xalign_finetuning/test.csv' \
+--train_path 'data/xalign_HRT_finetuning/train.csv' \
+--val_path 'data/xalign_HRT_finetuning/val.csv' \
+--test_path 'data/xalign_HRT_finetuning/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -34,5 +34,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'testing_finetuning'
+--run_name 'predicting_HRT_multi_pre_fine_ckpt_on_HRT_data'
 
