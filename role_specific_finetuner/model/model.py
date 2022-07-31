@@ -6,6 +6,7 @@ from indicnlp.transliterate import unicode_transliterate
 import torch.nn as nn
 import numpy as np
 from typing import Optional, Union
+import pandas as pd
 
 from transformers import (
     BeamSearchScorer,
@@ -329,6 +330,7 @@ class FineTuner(pl.LightningModule):
         return native_text
 
     def test_epoch_end(self, outputs):
+        df_to_write = pd.DataFrame(columns=['lang', 'input_text', 'ref_text', 'pred_text', 'bleu'])
         input_texts = []
         pred_texts = []
         ref_texts = []
@@ -369,7 +371,19 @@ class FineTuner(pl.LightningModule):
         # data = [i for i in zip(epoch_list, input_text, ref_text, pred_text)]
         # self.trainer.logger.log_text(key='validation_predictions', data=data, columns=['epoch', 'input_text', 'ref_text', 'pred_text'])
 
+        for key in self.languages_map:
+            l = len(self.languages_map[key]['original_pred_text'])
+            self.languages_map[key]['bleus'] = [self.cal_bleu.corpus_score([self.languages_map[key]['original_pred_text'][i]], [[self.languages_map[key]['original_ref_text'][i]]]).score for i in range(len(self.languages_map[key]['original_pred_text']))]
+            df_key = pd.DataFrame({
+                'lang':[key for i in range(l)],
+                'input_text':[self.languages_map[key]['original_input_text'][i] for i in range(l)],
+                'pred_text':[self.languages_map[key]['original_pred_text'][i] for i in range(l)],
+                'ref_text':[self.languages_map[key]['original_ref_text'][i] for i in range(l)],
+                'bleu':[self.languages_map[key]['bleus'][i] for i in range(l)]
+            })
+            df_to_write = pd.concat([df_to_write, df_key])
         
+        df_to_write.to_csv('predictions_transliterated.csv', sep='\t')
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)

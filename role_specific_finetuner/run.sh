@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -A research
+#SBATCH -A irel
 #SBATCH --gres=gpu:1
 #SBATCH -c 10
 #SBATCH --time=4-00:00:00
@@ -7,17 +7,17 @@
 
 #Activate conda environment role_spec
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate role_spec
+conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path=None
+checkpoint_path=wandb
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
---sanity_run yes \
---train_path 'data/wiki/train_multilingual_translated.csv' \
---val_path 'data/xalign_unified_script/val.csv' \
---test_path 'data/xalign_unified_script/test.csv' \
+--sanity_run no \
+--train_path 'data/xalign_transliterated_latest/train.csv' \
+--val_path 'data/xalign_transliterated_latest/val.csv' \
+--test_path 'data/xalign_transliterated_latest/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -34,5 +34,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'pretraining_multilingual'
+--run_name 'predicting_role_ids_copy'
 
