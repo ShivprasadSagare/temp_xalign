@@ -2,17 +2,17 @@
 #Following line is added to resolve the error 'Your shell has not been properly configured to use 'conda activate'. 
 #Uncomment and Pass the appropriate anaconda/miniconda path in the below line, if you face the error.
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate xalign_role
+conda activate base
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path='None'
+checkpoint_path=wandb
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run yes \
---train_path 'data/xalign_finetuning/train.csv' \
---val_path 'data/xalign_finetuning/val.csv' \
---test_path 'data/xalign_finetuning/test.csv' \
+--train_path 'data/xalign_HRT_only/train.csv' \
+--val_path 'data/xalign_HRT_only/val.csv' \
+--test_path 'data/xalign_HRT_only/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -28,6 +28,6 @@ python3 train.py \
 --max_epochs 5 \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
---project_name 'xalign' \
---run_name 'finetuning'
+--project_name 'swft' \
+--run_name 'finetuning_HRTQRQT_multi_pretrained_ckpt_on_only_HRTset'
 
