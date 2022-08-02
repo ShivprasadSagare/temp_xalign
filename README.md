@@ -171,7 +171,7 @@ Git clone and stay on main branch. <I>Before running this experiment, make sure 
 
 Download and unzip the data in data/ directory, using this link https://drive.google.com/file/d/1ancr8wa8gIWKrmOybi2UahAteaqFst_C/view?usp=sharing
 
-Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, checkpoint_path:'wandb'). 
+Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, checkpoint_path:'wandb'). Please keep checkpoint_path as 'wandb' only, exact location in the cloud is hardcoded in the script inside, we don't need to tweak it. 
 
 
 2.11 finetuning_HRTQRQT_english_pretrained_ckpt_on_only_HRT_dataset
