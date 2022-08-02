@@ -29,5 +29,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir '/scratch/experiments' \
 --project_name 'swft' \
---run_name 'finetuning_HRTQRQT_multi_pretrained_ckpt_on_only_HRTset'
+--run_name 'finetuning_HRTQRQT_en_pretrained_ckpt_on_only_HRTset'
 
