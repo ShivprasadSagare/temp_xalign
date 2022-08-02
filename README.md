@@ -174,6 +174,10 @@ Download and unzip the data in data/ directory, using this link https://drive.go
 Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, checkpoint_path:'wandb'). 
 
 
+2.11 finetuning_HRTQRQT_english_pretrained_ckpt_on_only_HRT_dataset
+
+git clone and then switch to the branch `temp_en`. Rest all the instructions and data file is same as above experiment 2.10.
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
