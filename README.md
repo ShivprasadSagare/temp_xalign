@@ -165,6 +165,15 @@ finetuning data: https://drive.google.com/file/d/1R-PjPp2ylKKWkkoLxbJz3c_vxszBqs
 Then run the file `run_finetuning.sh` with proper hyperparams edited in it. Set the checkpoint path to None.
 
 
+2.10 finetuning_HRTQRQT_multi_pretrained_ckpt_on_only_HRT_dataset
+
+Git clone and stay on main branch. <I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I> 
+
+Download and unzip the data in data/ directory, using this link https://drive.google.com/file/d/1ancr8wa8gIWKrmOybi2UahAteaqFst_C/view?usp=sharing
+
+Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, checkpoint_path:'wandb'). 
+
+
 3. Some miscelleneous tips before running experiment
   * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
