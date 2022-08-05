@@ -99,6 +99,7 @@ unzip xalign_HRT_only.zip
 
 cd ..
 ```
+Make sure you are on the master branch.
 Then run the file `run_both.sh` to run pretraining and finetuning sequentially automatically. Set `log_dir` and subsequent `checkpoint_path` correctly. Set other hyperparams as well before running.
 
 
