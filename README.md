@@ -84,9 +84,9 @@ xalign finetuning data: [https://drive.google.com/file/d/1FR9Dpab5Z-hF0BM-IO1d-9
 
 
 pretraining data: https://drive.google.com/file/d/18FdyPIR86wD8hvUYC-sU_BEO4WZeurXv/view?usp=sharing<br>
-finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
+finetuning data: https://drive.google.com/file/d/1ancr8wa8gIWKrmOybi2UahAteaqFst_C/view?usp=sharing
 
-Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_HRT_only`.
 ```
 mkdir data
 cd data
@@ -94,8 +94,8 @@ cd data
 gdown 18FdyPIR86wD8hvUYC-sU_BEO4WZeurXv
 unzip wiki_pretraining.zip
 
-gdown 1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4
-unzip xalign_finetuning.zip
+gdown 1ancr8wa8gIWKrmOybi2UahAteaqFst_C
+unzip xalign_HRT_only.zip
 
 cd ..
 ```
@@ -110,7 +110,7 @@ Then run the file `run_both.sh` to run pretraining and finetuning sequentially a
 pretraining data: <br>
 finetuning data: 
 
-Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_HRT_only`.
 ```
 mkdir data
 cd data
@@ -130,9 +130,9 @@ Then run the file `run_pretrain.sh` with proper hyperparams edited in it. Next, 
 <I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I>
 
 pretraining data: https://drive.google.com/file/d/13Yb7eGuZ3-C3JdWQnFC0UepwQXbfGgJh/view?usp=sharing<br>
-finetuning data: https://drive.google.com/file/d/1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4/view?usp=sharing
+finetuning data: https://drive.google.com/file/d/1ancr8wa8gIWKrmOybi2UahAteaqFst_C/view?usp=sharing
 
-Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_finetuning`.
+Alternatively, you can use following gdown commands to directly download it, and unzip the files into the newly created `./data` directory. Final directory structures should look like `./data/wiki_pretraining` and `./data/xalign_HRT_only`.
 ```
 mkdir data
 cd data
@@ -140,8 +140,8 @@ cd data
 gdown 13Yb7eGuZ3-C3JdWQnFC0UepwQXbfGgJh
 unzip wiki_pretraining.zip
 
-gdown 1JdtYxJlAYp7UGaD9mkY32ggehlPYcjJ4
-unzip xalign_finetuning.zip
+gdown 1ancr8wa8gIWKrmOybi2UahAteaqFst_C
+unzip xalign_HRT_only.zip
 
 cd ..
 ```
