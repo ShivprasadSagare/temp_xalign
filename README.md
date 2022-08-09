@@ -180,7 +180,8 @@ Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, chec
 git clone and then switch to the branch `temp_en`. Rest all the instructions and data file is same as above experiment 2.10.
 
 3. Some miscelleneous tips before running experiment
-  * Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
+  * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`
+  * I have set up new wandb account for having more cloud storage. Please use this key starting August 9, 2023. Key: bcb8767e750b1d80ba93361478ba51b615f2b8ce
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
   * Pass appropriate arguments for batch size, gpus, epochs, etc. in following scripts.
   * `conda activate xalign_role` from shell can throw error sometimes. Refer to initial few commented lines to reolve the issue instantly, if it occurs.
