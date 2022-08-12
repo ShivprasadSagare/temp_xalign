@@ -170,8 +170,8 @@ class FineTuner(pl.LightningModule):
                 'bleu':[self.languages_map[key]['bleus'][i] for i in range(l)]
             })
             df_to_write = pd.concat([df_to_write, df_key])
-        
-        df_to_write.to_csv('predictions_HRT_en.csv', sep='\t')
+        run_name = self.hparams['run_name']
+        df_to_write.to_csv(f'predictions_{run_name}.csv', sep='\t')
 
 
     def configure_optimizers(self):

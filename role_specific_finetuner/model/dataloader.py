@@ -37,19 +37,34 @@ class DS(Dataset):
         lang_code = self.df.iloc[idx]['lang']
         lang = self.languages_map[lang_code]['label']
         lang_id = self.languages_map[lang_code]['id']
-        prefix = f'rdf to {lang} text: '
-        # prefix = f'rdf to en text: '
+        task = self.df.iloc[idx]['task']
 
-        # input_encoding = self.role_specific_encoding(prefix, input_text)
-        input_encoding = self.plain_encoding(prefix, input_text)
-        target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
+        if task == 'translation':
+            prefix = f'translate to {lang} text: '
+            # input_encoding = self.role_specific_encoding(prefix, input_text)
+            input_encoding = self.tokenizer(prefix+input_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
+            target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
 
-        input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
-        labels = target_encoding['input_ids']
-        labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
+            input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
+            labels = target_encoding['input_ids']
+            labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
 
-        return {'input_ids': input_ids.squeeze(), 'attention_mask': attention_mask.squeeze(), 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
-        # squeeze() is needed to remove the batch dimension
+            return {'input_ids': input_ids.squeeze(), 'attention_mask': attention_mask.squeeze(), 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
+            # squeeze() is needed to remove the batch dimension
+        elif task == 'rdf2text':
+            prefix = f'rdf to {lang} text: '
+            # input_encoding = self.role_specific_encoding(prefix, input_text)
+            input_encoding = self.plain_encoding(prefix, input_text)
+            target_encoding = self.tokenizer(target_text, return_tensors='pt', max_length=self.max_target_length ,padding='max_length', truncation=True)
+
+            input_ids, attention_mask = input_encoding['input_ids'], input_encoding['attention_mask']
+            labels = target_encoding['input_ids']
+            labels[labels == self.tokenizer.pad_token_id] = -100    # for ignoring the cross-entropy loss at padding locations
+
+            return {'input_ids': input_ids.squeeze(), 'attention_mask': attention_mask.squeeze(), 'labels': labels.squeeze(), 'lang': torch.tensor(lang_id)}   
+            # squeeze() is needed to remove the batch dimension
+        else:
+            print('error in identifying task')
 
     def role_specific_encoding(self, prefix, input_text):
         input_ids = []

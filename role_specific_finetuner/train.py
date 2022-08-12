@@ -1,6 +1,7 @@
 from model.model import FineTuner 
 from model.dataloader import DataModule
 
+import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -30,6 +31,7 @@ def main():
     parser = init_args()
     args = parser.parse_args()
     args = vars(args)
+    torch.cuda.empty_cache()
 
     dm = DataModule(
         train_path = args['train_path'],
@@ -48,20 +50,24 @@ def main():
         model = FineTuner(**args)
     elif args['checkpoint_path']=='wandb':
         run = wandb.init()
-        artifact = run.use_artifact('shivprasad/swft/model-hjkldanw:v0', type='model')
-        artifact_dir = artifact.download('/scratch/shivprasad.sagare/')
+        artifact = run.use_artifact('shivprasad/swft/model-1slfdz76:v0', type='model')
+        artifact_dir = artifact.download('./')
         # load checkpoint
         args['checkpoint_path'] = Path(artifact_dir) / "model.ckpt"
         model = FineTuner.load_from_checkpoint(**args)
     else:
         model = FineTuner.load_from_checkpoint(**args)
 
+    try:
+        os.rmdir(args['log_dir'])
+    except:
+        pass
     os.makedirs(args['log_dir'], exist_ok=True)
 
     now = datetime.now()
 
     if args['sanity_run']=='yes':
-        log_model = False
+        log_model = True
         limit_train_batches = 4
         limit_val_batches = 4
         limit_test_batches = 4
@@ -93,7 +99,7 @@ def main():
     )
 
     trainer.fit(model, dm)
-    # trainer.test(model=model, datamodule=dm)
+    trainer.test(model=model, datamodule=dm)
 
 if __name__ == '__main__':
     main()
