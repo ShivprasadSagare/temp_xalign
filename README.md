@@ -179,9 +179,18 @@ Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, chec
 
 git clone and then switch to the branch `temp_en`. Rest all the instructions and data file is same as above experiment 2.10.
 
+2.13 Combined instructions for running multi-stage and multi-task pretraining experiments.
+Please switch to the `multi_stage_task_pretraining` branch for both the experiments.
+
+Link to the data:   
+unzip the file data.zip and place `data` directory in role_specific_finetuner/. It has 4 subdirectories, stage_1, stage_2, stage_1_and_2, stage_3.
+
+Please follow the files run_multi_stage.sh and run_multi_task.sh to start both experiments. Also, follow the data paths, --log_dir, and--checkpoint_path values in it carefully.
+
+
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
-  * I have set up new wandb account for having more cloud storage. Please use this key starting August 9, 2023. Please type `export WANDB_API_KEY=bcb8767e750b1d80ba93361478ba51b615f2b8ce`
+  * I have set up new wandb account for having more cloud storage. Please use this key starting August 9, 2022. Please type `export WANDB_API_KEY=bcb8767e750b1d80ba93361478ba51b615f2b8ce`
   * Make sure to sanity run the following scripts first, by passing `sanity_run=yes` in respective scripts. Later, pass `sanity_run=no` while running actual training.
   * Pass appropriate arguments for batch size, gpus, epochs, etc. in following scripts.
   * `conda activate xalign_role` from shell can throw error sometimes. Refer to initial few commented lines to reolve the issue instantly, if it occurs.
