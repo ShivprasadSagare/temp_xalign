@@ -179,13 +179,14 @@ Then , run `run_finetine.sh`, with appropriate parameters in it (epochs:30, chec
 
 git clone and then switch to the branch `temp_en`. Rest all the instructions and data file is same as above experiment 2.10.
 
-2.13 Combined instructions for running multi-stage and multi-task pretraining experiments.
+2.12 Combined instructions for running multi-stage and multi-task pretraining experiments.
+
 Please switch to the `multi_stage_task_pretraining` branch for both the experiments.
 
-Link to the data:   
-unzip the file data.zip and place `data` directory in role_specific_finetuner/. It has 4 subdirectories, stage_1, stage_2, stage_1_and_2, stage_3.
+Link to the data (same for both experiments):   
+unzip the file data.zip and place `data` directory in `role_specific_finetuner/`. It has 4 subdirectories, `stage_1`, `stage_2`, `stage_1_and_2`, `stage_3`.
 
-Please follow the files run_multi_stage.sh and run_multi_task.sh to start both experiments. Also, follow the data paths, --log_dir, and--checkpoint_path values in it carefully.
+Please follow the files `run_multi_stage.sh` and `run_multi_task.sh` to start both experiments. Also, follow the data paths, --log_dir, and--checkpoint_path values in it carefully.
 
 
 3. Some miscelleneous tips before running experiment
