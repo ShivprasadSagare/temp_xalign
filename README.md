@@ -183,7 +183,8 @@ git clone and then switch to the branch `temp_en`. Rest all the instructions and
 
 Please switch to the `multi_stage_task_pretraining` branch for both the experiments.
 
-Link to the data (same for both experiments):   
+Link to the data (same for both experiments): https://drive.google.com/file/d/1nokKQhGPe_3CvLGYH87pnyWvTD31ppyZ/view?usp=sharing
+
 unzip the file data.zip and place `data` directory in `role_specific_finetuner/`. It has 4 subdirectories, `stage_1`, `stage_2`, `stage_1_and_2`, `stage_3`.
 
 Please follow the files `run_multi_stage.sh` and `run_multi_task.sh` to start both experiments. Also, follow the data paths, --log_dir, and--checkpoint_path values in it carefully.
