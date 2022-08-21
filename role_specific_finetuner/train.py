@@ -50,7 +50,7 @@ def main():
         model = FineTuner(**args)
     elif args['checkpoint_path']=='wandb':
         run = wandb.init()
-        artifact = run.use_artifact('shivprasad/swft/model-1slfdz76:v0', type='model')
+        artifact = run.use_artifact('ships59/swft/model-9t1o49hs:v0', type='model')
         artifact_dir = artifact.download('./')
         # load checkpoint
         args['checkpoint_path'] = Path(artifact_dir) / "model.ckpt"
@@ -98,7 +98,7 @@ def main():
         limit_test_batches=limit_test_batches
     )
 
-    trainer.fit(model, dm)
+    # trainer.fit(model, dm)
     trainer.test(model=model, datamodule=dm)
 
 if __name__ == '__main__':
