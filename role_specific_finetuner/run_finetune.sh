@@ -27,7 +27,7 @@ python3 train.py \
 --gpus 2 \
 --max_epochs 5 \
 --strategy 'ddp' \
---log_dir '/scratch/experiments' \
+--log_dir 'experiments' \
 --project_name 'swft' \
 --run_name 'finetuning_HRTQRQT_multi_pretrained_ckpt_on_only_HRTset'
 
