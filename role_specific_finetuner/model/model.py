@@ -32,8 +32,8 @@ class FineTuner(pl.LightningModule):
         }
         self.lang_id_map = {v['id']: k for k, v in self.languages_map.items()}
 
-    def forward(self, input_ids, attention_mask, role_ids, labels):
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels)
+    def forward(self, input_ids, attention_mask, role_ids, labels, output_attentions):
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, role_ids=role_ids, labels=labels, output_attentions=True)
         return outputs
 
     def _step(self, batch):
