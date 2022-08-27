@@ -8,16 +8,16 @@
 #Activate conda environment role_spec
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate base
-
+export WANDB_API_KEY=bcb8767e750b1d80ba93361478ba51b615f2b8ce
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
 checkpoint_path=wandb
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run no \
---train_path 'data/xalign_HRT_finetuning/train.csv' \
---val_path 'data/xalign_HRT_finetuning/val.csv' \
---test_path 'data/xalign_HRT_finetuning/test.csv' \
+--train_path 'data/xalign_HRT_only/train.csv' \
+--val_path 'data/xalign_HRT_only/val.csv' \
+--test_path 'data/xalign_HRT_only/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -34,5 +34,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'predicting_HRT_en_pre_fine_ckpt_on_HRT_data'
+--run_name 'predicting_HRT_multi_3e-5_ckpt_on_3e-5_only_data'
 

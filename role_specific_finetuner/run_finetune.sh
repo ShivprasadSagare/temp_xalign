@@ -5,7 +5,7 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate base
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path=wandb
+checkpoint_path=None
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
@@ -20,7 +20,7 @@ python3 train.py \
 --val_batch_size 4 \
 --test_batch_size 4 \
 --model_name_or_path 'google/mt5-small' \
---learning_rate 1e-3 \
+--learning_rate 3e-5 \
 --eval_beams 4 \
 --tgt_max_seq_len 128 \
 --checkpoint_path $checkpoint_path \
@@ -29,5 +29,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'finetuning_HRTQRQT_multi_pretrained_ckpt_on_only_HRTset'
+--run_name 'xyz'
 
