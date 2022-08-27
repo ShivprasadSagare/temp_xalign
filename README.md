@@ -191,7 +191,9 @@ Please follow the files `run_multi_stage.sh` and `run_multi_task.sh` to start bo
 
 2.13 finetuning vanilla mT5 on xalign role-ordered dataset(HRT only) <br>
 git clone the repo and stay on main branch.<br>
+
 <I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I> <br>
+
 role_ordered_xalign_HRT_only dataset: https://drive.google.com/file/d/1_8B6qB_nvzCkRDW6hxfaSdKEJXE2Av5X/view?usp=sharing <br>
 ```
 mkdir data
@@ -203,9 +205,11 @@ cd ..
 ```
 run `run_finetune.sh` with proper arguments for batch size and GPUs.
 
-2.14 finetuning role_specific mT5 on xalign role-ordered dataset(HRT only)
-git clone the repo and switch to `original_role_ids` branch<br>
+2.14 finetuning role_specific mT5 on xalign role-ordered dataset(HRT only) <br>
+git clone the repo and switch to `original_role_ids` branch <br>
+
 <I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first make sure you are on the branch `original_role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I> <br>
+
 setup the data similary as in above experiment 2.13. <br>
 run `run_finetune.sh` with proper arguments for batch size and GPUs.
 
