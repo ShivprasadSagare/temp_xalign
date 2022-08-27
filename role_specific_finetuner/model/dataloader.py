@@ -105,8 +105,8 @@ class DS(Dataset):
     @staticmethod
     def create_tokenizer(tokenizer_name_or_path):
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
-        tokenizer.add_tokens(['S|', 'P|', 'O|'])
-        print("we added S|, P|, O| to the tokenizer")
+        tokenizer.add_tokens(['<H>', '<R>', '<T>'])
+        print("we added <H>, <R>, <T> to the tokenizer")
         return tokenizer
 
 class DataModule(pl.LightningDataModule):
