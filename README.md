@@ -204,9 +204,10 @@ cd ..
 run `run_finetune.sh` with proper arguments for batch size and GPUs.
 
 2.14 finetuning role_specific mT5 on xalign role-ordered dataset(HRT only)
-git clone the repo and switch to role_ids branch<br>
-
-YET TO ADD
+git clone the repo and switch to `original_role_ids` branch<br>
+<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first make sure you are on the branch `original_role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I> <br>
+setup the data similary as in above experiment 2.13. <br>
+run `run_finetune.sh` with proper arguments for batch size and GPUs.
 
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
