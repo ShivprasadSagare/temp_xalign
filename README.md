@@ -189,6 +189,24 @@ unzip the file data.zip and place `data` directory in `role_specific_finetuner/`
 
 Please follow the files `run_multi_stage.sh` and `run_multi_task.sh` to start both experiments. Also, follow the data paths, --log_dir, and--checkpoint_path values in it carefully.
 
+2.13 finetuning vanilla mT5 on xalign role-ordered dataset(HRT only) <br>
+git clone the repo and stay on main branch.<br>
+<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I> <br>
+role_ordered_xalign_HRT_only dataset: https://drive.google.com/file/d/1_8B6qB_nvzCkRDW6hxfaSdKEJXE2Av5X/view?usp=sharing <br>
+```
+mkdir data
+cd data
+
+gdown 1_8B6qB_nvzCkRDW6hxfaSdKEJXE2Av5X
+unzip role_ordered_xalign_HRT_only.zip
+cd ..
+```
+run `run_finetune.sh` with proper arguments for batch size and GPUs.
+
+2.14 finetuning role_specific mT5 on xalign role-ordered dataset(HRT only)
+git clone the repo and switch to role_ids branch<br>
+
+YET TO ADD
 
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
