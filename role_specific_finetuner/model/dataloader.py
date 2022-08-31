@@ -32,7 +32,7 @@ class DS(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        input_text = self.df.iloc[idx]['input']
+        input_text = self.df.iloc[idx]['input'].replace('<H>', '').replace('<R>', '').replace('<T>', '')
         target_text = self.df.iloc[idx]['target']
         lang_code = self.df.iloc[idx]['lang']
         lang = self.languages_map[lang_code]['label']
