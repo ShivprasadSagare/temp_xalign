@@ -220,7 +220,7 @@ Git pull the latest and checkout to the branch `bilingual`.
 
 setup the data similary as in above experiment 2.13. <br>
 
-run 'run_all_lang.sh` with proper arguments for batch size and GPUs and sanity_run=no.
+run `run_all_lang.sh` with proper arguments for batch size and GPUs and sanity_run=no.
 
 2.16 bilingual model per language. finetuning vanilla mT5 on xalign original(not-ordered) dataset(HRT only) (For Tushar da)<br>
 Git pull the latest and checkout to the branch `bilingual`.
@@ -237,7 +237,7 @@ unzip xalign_HRT_only.zip
 cd ..
 ```
 
-run 'run_all_lang.sh` with proper arguments for batch size and GPUs and sanity_run=no. <B>Make sure to insert right data path arguments in this script</B> (xalign_HRT_only/train.csv)(similarly for val and test).
+run `run_all_lang.sh` with proper arguments for batch size and GPUs and sanity_run=no. <B>Make sure to insert right data path arguments in this script</B> (xalign_HRT_only/train.csv)(similarly for val and test).
 
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
