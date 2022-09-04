@@ -6,9 +6,9 @@ import json
 import torch
 
 class DS(Dataset):
-    def __init__(self, data_path, tokenizer, max_source_length, max_target_length):
+    def __init__(self, data_path, tokenizer, max_source_length, max_target_length, lang):
         self.df = pd.read_csv(data_path, sep='\t', )
-        self.df = self.df[:len(self.df)]
+        self.df = self.df[self.df['lang'] == lang]
         self.tokenizer = tokenizer
         self.max_source_length = max_source_length
         self.max_target_length = max_target_length
@@ -133,10 +133,10 @@ class DataModule(pl.LightningDataModule):
 
     def setup(self, stage=None):
         if stage == 'fit':
-            self.train = DS(self.hparams.train_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
-            self.val = DS(self.hparams.val_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
+            self.train = DS(self.hparams.train_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length, self.hparams.lang)
+            self.val = DS(self.hparams.val_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length, self.hparams.lang)
         else:
-            self.test = DS(self.hparams.test_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
+            self.test = DS(self.hparams.test_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length, self.hparams.lang)
 
     def train_dataloader(self):
         return DataLoader(self.train, batch_size=self.hparams.train_batch_size, num_workers=0,shuffle=True)
@@ -159,4 +159,5 @@ class DataModule(pl.LightningDataModule):
         parser.add_argument('--train_batch_size', type=int, default=4)
         parser.add_argument('--val_batch_size', type=int, default=4)
         parser.add_argument('--test_batch_size', type=int, default=4)
+        parser.add_argument('--lang', type=str, default='en')
         return parent_parser

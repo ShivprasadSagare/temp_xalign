@@ -40,7 +40,8 @@ def main():
         max_target_length = args['max_target_length'],
         train_batch_size = args['train_batch_size'],
         val_batch_size = args['val_batch_size'],
-        test_batch_size = args['test_batch_size']
+        test_batch_size = args['test_batch_size'],
+        lang = args['lang']
     )
 
     args.update({'tokenizer': dm.tokenizer})
