@@ -213,6 +213,32 @@ git clone the repo and switch to `original_role_ids` branch <br>
 setup the data similary as in above experiment 2.13. <br>
 run `run_finetune.sh` with proper arguments for batch size and GPUs.
 
+2.15 bilingual model per language. finetuning vanilla mT5 on xalign role-ordered dataset(HRT only) <br>
+Git pull the latest and checkout to the branch `bilingual`.
+
+<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I> <br>
+
+setup the data similary as in above experiment 2.13. <br>
+
+run 'run_all_lang.sh` with proper arguments for batch size and GPUs.
+
+2.16 bilingual model per language. finetuning vanilla mT5 on xalign original(not-ordered) dataset(HRT only) (For Tushar da)<br>
+Git pull the latest and stay on the main branch `main`.
+
+<I>Before running this experiment, make sure you have standard recent installation of transformers, as opposed to custom edited version of transformers. For the same, uninstall existing transformers library, and install it again using `pip install transformers`. </I> <br>
+
+xalign_HRT_only dataset: https://drive.google.com/file/d/1ancr8wa8gIWKrmOybi2UahAteaqFst_C/view?usp=sharing <br>
+```
+mkdir data
+cd data
+
+gdown 1ancr8wa8gIWKrmOybi2UahAteaqFst_C
+unzip xalign_HRT_only.zip
+cd ..
+```
+
+run 'run_all_lang.sh` with proper arguments for batch size and GPUs. <B>Make sure to insert right data path arguments in this script</B> (xalign_HRT_only/train.csv)(similarly for val and test).
+
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
   * I have set up new wandb account for having more cloud storage. Please use this key starting August 9, 2022. Please type `export WANDB_API_KEY=bcb8767e750b1d80ba93361478ba51b615f2b8ce`
