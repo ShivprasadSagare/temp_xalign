@@ -92,8 +92,8 @@ def main():
         limit_test_batches=limit_test_batches
     )
 
-    # trainer.fit(model, dm)
-    trainer.test(model=model, datamodule=dm)
+    trainer.fit(model, dm)
+#     trainer.test(model=model, datamodule=dm)
 
 if __name__ == '__main__':
     main()
