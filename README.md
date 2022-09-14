@@ -239,6 +239,16 @@ cd ..
 
 run `run_all_lang.sh` with proper arguments for batch size and GPUs and sanity_run=no. <B>Make sure to insert right data path arguments in this script</B> (xalign_HRT_only/train.csv)(similarly for val and test).
 
+2.17 large model training for best model<br>
+Git pull the latest and checkout to the branch `SPO_role_ids`.
+
+<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first make sure you are on the branch `SPO_role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I> <br>
+
+gdown the xalign_unified_script dataset: https://drive.google.com/file/d/1xuS8zvq4k2F6Uxfx6XF6R3ueKNNFodjl/view?usp=sharing <br>
+
+run `run_finetune.sh` with proper arguments for batch size and GPUs and sanity_run=no. Just confirm once that the tokenizer and model name is set to `google/mt5-base`.
+
+
 3. Some miscelleneous tips before running experiment
   * ~~Set up the wand api key using `export WANDB_API_KEY=bf6eddaca0cddb4d9e70aa37fb5ef56202d7ef74`~~
   * I have set up new wandb account for having more cloud storage. Please use this key starting August 9, 2022. Please type `export WANDB_API_KEY=bcb8767e750b1d80ba93361478ba51b615f2b8ce`
