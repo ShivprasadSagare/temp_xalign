@@ -249,9 +249,9 @@ gdown the xalign_unified_script dataset: https://drive.google.com/file/d/1xuS8zv
 run `run_finetune.sh` with proper arguments for batch size and GPUs and sanity_run=no. Just confirm once that the tokenizer and model name is set to `google/mt5-base`.
 
 2.18 data_scaling experiment
-Git pull the latest and checkout to the branch `original_role_ids`.
+Git pull the latest and checkout to the branch `data_scaling_original_role_ids`.
 
-<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first make sure you are on the branch `original_role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I> <br>
+<I>Before running this experiment, make sure you have custom edited installation of transformers, as opposed to standard version of transformers. For the same, first make sure you are on the branch `data_scaling_original_role_ids`, then uninstall existing transformers library, and install it again using `cd transformers;pip install .`. </I> <br>
 
 gdown the xalign_unified_script dataset: https://drive.google.com/file/d/1xuS8zvq4k2F6Uxfx6XF6R3ueKNNFodjl/view?usp=sharing <br>
 
