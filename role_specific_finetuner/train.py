@@ -10,6 +10,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 import wandb
+import numpy as np
+import random
+import torch
 
 def init_args() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
@@ -26,7 +29,16 @@ def init_args() -> argparse.ArgumentParser:
     parser.add_argument('--run_name', type=str, default='run_1')
     return parser
 
+def random_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+
+
 def main():
+    random_seed(42)
     parser = init_args()
     args = parser.parse_args()
     args = vars(args)
