@@ -6,9 +6,10 @@ import json
 import torch
 
 class DS(Dataset):
-    def __init__(self, data_path, tokenizer, max_source_length, max_target_length):
+    def __init__(self, data_path, tokenizer, max_source_length, max_target_length, data_scaling_factor=1):
         self.df = pd.read_csv(data_path, sep='\t', )
-        self.df = self.df[:len(self.df)]
+        self.df = self.df.sample(frac=1)
+        self.df = self.df.sample(frac=data_scaling_factor)
         self.tokenizer = tokenizer
         self.max_source_length = max_source_length
         self.max_target_length = max_target_length
@@ -117,7 +118,8 @@ class DataModule(pl.LightningDataModule):
 
     def setup(self, stage=None):
         if stage == 'fit':
-            self.train = DS(self.hparams.train_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
+            self.train = DS(self.hparams.train_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length, self.hparams.data_scaling_factor)
+            print(f"initialized train dataset with size {len(self.train)}")
             self.val = DS(self.hparams.val_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
         else:
             self.test = DS(self.hparams.test_path, self.tokenizer, self.hparams.max_source_length, self.hparams.max_target_length)
@@ -143,4 +145,5 @@ class DataModule(pl.LightningDataModule):
         parser.add_argument('--train_batch_size', type=int, default=4)
         parser.add_argument('--val_batch_size', type=int, default=4)
         parser.add_argument('--test_batch_size', type=int, default=4)
+        parser.add_argument('--data_scaling_factor', type=float, default=1.0)
         return parent_parser
