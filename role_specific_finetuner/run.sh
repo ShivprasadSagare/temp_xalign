@@ -15,9 +15,9 @@ checkpoint_path=wandb
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
 --sanity_run no \
---train_path 'data/role_ordered_xalign_HRT_only/train.csv' \
---val_path 'data/role_ordered_xalign_HRT_only/val.csv' \
---test_path 'data/role_ordered_xalign_HRT_only/test.csv' \
+--train_path 'data/xalign_unified_script/train.csv' \
+--val_path 'data/xalign_unified_script/val.csv' \
+--test_path 'data/xalign_unified_script/test.csv' \
 --tokenizer_name_or_path 'google/mt5-small' \
 --max_source_length 384 \
 --max_target_length 128 \
@@ -34,5 +34,5 @@ python3 train.py \
 --strategy 'ddp' \
 --log_dir 'experiments' \
 --project_name 'swft' \
---run_name 'predicting_finetuning_role-specific finetuning on role_ordered HRT only dataset'
+--run_name 'predicting_model_scaling_mt5base_30_epochs'
 
