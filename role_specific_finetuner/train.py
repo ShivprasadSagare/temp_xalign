@@ -48,8 +48,8 @@ def main():
         model = FineTuner(**args)
     elif args['checkpoint_path']=='wandb':
         run = wandb.init()
-        artifact = run.use_artifact('ships59/swft/model-1vt8bm9v:v0', type='model')
-        artifact_dir = artifact.download('/scratch/shivprasad.sagare/')
+        artifact = run.use_artifact('shivprasad/temp_xalign-role_specific_finetuner/model-1cyghku8:v0', type='model')
+        artifact_dir = artifact.download('./')
         # load checkpoint
         args['checkpoint_path'] = Path(artifact_dir) / "model.ckpt"
         model = FineTuner.load_from_checkpoint(**args)
