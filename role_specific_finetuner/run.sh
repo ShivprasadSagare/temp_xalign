@@ -10,7 +10,7 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate xalign_role
 
 #If using checkpoint, pass appropriate arguments in code below, otherwise set checkpoint path to 'None' in below line
-checkpoint_path=wandb
+checkpoint_path='enter ckpt path here'
 
 #For sanity checking whole pipeline with small data, pass argument 'yes'. For full run, pass 'no'
 python3 train.py \
